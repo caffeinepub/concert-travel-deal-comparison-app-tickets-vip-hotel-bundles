@@ -88,9 +88,15 @@ export interface Photo {
 export interface ComparisonInput {
     ticketSources: Array<Ticket>;
     event: string;
+    userChoice?: BundleInput;
     vipPackageOptions: Array<VIPPackage>;
     hotels: Array<Hotel>;
     travelWindow: TravelWindow;
+}
+export interface BundleInput {
+    ticket: Ticket;
+    hotel: Hotel;
+    roomType: RoomType;
 }
 export interface GroupMember {
     id: bigint;
@@ -107,9 +113,10 @@ export interface TripComparison {
     id: bigint;
     userId: Principal;
     createdAt: Time;
-    bundles: Array<Bundle>;
+    upgradeAlternatives: Array<Bundle>;
     ticketSources: Array<Ticket>;
     event: string;
+    userChoice?: Bundle;
     vipPackageOptions: Array<VIPPackage>;
     hotels: Array<Hotel>;
     travelWindow: TravelWindow;

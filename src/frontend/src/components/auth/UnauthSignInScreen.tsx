@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { branding } from '@/config/branding';
+import { AlertCircle } from 'lucide-react';
 
 interface UnauthSignInScreenProps {
   title: string;
@@ -14,7 +16,7 @@ export default function UnauthSignInScreen({
   description,
   signInMessage,
 }: UnauthSignInScreenProps) {
-  const { login } = useInternetIdentity();
+  const { login, isLoggingIn, isLoginError } = useInternetIdentity();
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-2xl">
@@ -28,14 +30,22 @@ export default function UnauthSignInScreen({
             />
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Welcome to EOA</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">{title}</h1>
         <p className="text-muted-foreground text-lg mb-8">{description}</p>
       </div>
       <Card className="border-2">
         <CardContent className="pt-12 pb-12 text-center">
           <p className="text-lg mb-6">{signInMessage}</p>
-          <Button size="lg" onClick={login}>
-            Sign In
+          {isLoginError && (
+            <Alert variant="destructive" className="mb-6 text-left">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Unable to start sign-in. Please try again or check your internet connection.
+              </AlertDescription>
+            </Alert>
+          )}
+          <Button size="lg" onClick={login} disabled={isLoggingIn}>
+            {isLoggingIn ? 'Signing in...' : 'Sign In'}
           </Button>
         </CardContent>
       </Card>

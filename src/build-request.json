@@ -1,53 +1,109 @@
 {
   "kind": "build_request",
-  "title": "Make the sign-in (login) screen the default first page and show “Welcome to EOA”",
+  "title": "Auto-flag and auto-save better-value upgrades + add multi-mode transport comparison (train/taxi/etc.)",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-32",
-      "text": "Make the login/sign-in screen the first (default) screen users see by changing the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.",
-      "target": "frontend",
+      "id": "REQ-46",
+      "text": "Extend the backend trip-comparison data model so a saved TripComparison can (a) store the user’s originally planned/saved choices and (b) store a set of auto-flagged “better-value upgrades” (e.g., better seats/first class/nicer room) that are cheaper than the user’s planned choice.",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "I want the login page where you log in to be first and it says welcome to eoa"
+          "when they save their trip ... don't only flag their hotels ... but flag other things like front or seats or like first class tickets or even nicer hotel rooms that go cheaper than what they were going to originally pay ... and ... it ... pre saves the other ticket that it flag too"
         ]
       },
       "acceptanceCriteria": [
-        "When a user visits `/`, the app shows a sign-in page (not the current Home/Landing page).",
-        "All other existing routes (e.g., `/trip-builder`, `/saved`, `/memory-finder`, `/groups`, `/profile`) remain unchanged and reachable via navigation or direct URL."
+        "Backend types support persisting a user selection for ticket, VIP (optional), hotel+room, and transport (if present) for each saved comparison.",
+        "Backend types support persisting lists of flagged upgrade alternatives for tickets, transport options, and hotel rooms.",
+        "createTripComparison stores the provided selection + flagged upgrade data along with the rest of the comparison inputs.",
+        "Existing getAllUserComparisons returns the additional saved selection + flagged upgrade data for each comparison (no runtime traps when reading existing saved comparisons created before this change)."
       ]
     },
     {
-      "id": "REQ-33",
-      "text": "Ensure the default sign-in page shown at `/` displays the exact heading text \"Welcome to EOA\" (English text, exact casing) and includes a working Sign In button that initiates Internet Identity login; after a successful login, redirect the user to `/profile`.",
+      "id": "REQ-47",
+      "text": "Add transportation options to the trip-building flow so users can compare total trip cost across multiple transport modes (at minimum: plane, train, and taxi/ground transport) and carry these inputs through to results and saving.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "I want the login page where you log in to be first and it says welcome to eoa"
+          "travel doesn't only do for plane tickets if they decide to take a train or taxis it compares everything and gives him the cheapest price"
         ]
       },
       "acceptanceCriteria": [
-        "The sign-in page at `/` visibly displays the heading text exactly: \"Welcome to EOA\".",
-        "No extra or garbled characters appear in the welcome heading text.",
-        "Clicking \"Sign In\" on the `/` page initiates Internet Identity login.",
-        "After a successful login from the `/` page, the user is navigated to `/profile`."
+        "Trip Builder has a section to add/edit/remove transportation offers (mode + name/provider + class/comfort label + price + currency).",
+        "Results calculation includes transport cost in the displayed total bundle cost when transport offers are provided.",
+        "If transport offers are provided, the comparison logic can identify the cheapest transport option for the trip (currency-matching with the rest of the bundle).",
+        "All new user-facing labels and helper text related to transport are in English."
+      ]
+    },
+    {
+      "id": "REQ-48",
+      "text": "Implement better-value upgrade detection in the local comparison logic so the app can flag higher-quality options that are cheaper than the user’s planned choice (tickets: e.g., “front row”; transport: e.g., “first class”; hotels: e.g., higher star rating / nicer room type), using only the offers the user entered.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "flag other things like front or seats or like first class tickets or even nicer hotel rooms that go cheaper than what they were going to originally pay"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The UI allows the user to indicate which ticket/transport/hotel-room is their planned (baseline) choice for the trip before saving.",
+        "Given a baseline choice, the app flags alternative offers as “better-value upgrades” when they are (a) cheaper than the baseline price AND (b) higher quality than the baseline (based on user-entered quality/class labels and/or hotel star rating/room label).",
+        "Flagged upgrade results are deterministic and come only from the user-entered offers (no external API calls).",
+        "Results UI visibly distinguishes flagged upgrades from the baseline planned choice (English labels)."
+      ]
+    },
+    {
+      "id": "REQ-49",
+      "text": "When saving a trip comparison, auto-save the flagged upgrade alternatives alongside the user’s originally planned choice, and surface both in the saved-comparisons (CostCompass) view.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "if it flags a ticket ... it doesn't only like pre-saved that their ticket ... but it also pre saves the other ticket that it flag too"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clicking “Save Comparison” persists: (1) the user’s baseline planned choice and (2) the flagged better-value upgrade alternatives.",
+        "Saved comparisons list remains functional, and each comparison detail summary shows an English summary of the baseline planned choice plus counts (or a short list) of auto-saved flagged upgrades by category (tickets/transport/hotel rooms).",
+        "Deleting a comparison still deletes the entire saved comparison including its baseline and flagged upgrade metadata.",
+        "Frontend React Query hooks and types are updated to match the new backend TripComparison/ComparisonInput fields, with no TypeScript errors."
+      ]
+    },
+    {
+      "id": "REQ-50",
+      "text": "Ensure any new or modified user-facing copy introduced for upgrade flagging and transportation comparison is clear English and does not introduce non-English or garbled text.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All new UI headings, button labels, helper text, and empty/error states related to: transport offers, “planned choice”, and “better-value upgrades” are in English.",
+        "No new UI strings mention third-party sign-in providers or unrelated login flows."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/components/ui` (read-only UI component sources).",
-    "Do not edit `frontend/src/hooks/useInternetIdentity.ts` / `.tsx`, `frontend/src/hooks/useActor.ts`, or `frontend/src/main.tsx` (immutable paths)."
+    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
+    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or any files under frontend/src/components/ui.",
+    "Do not add external databases or external API integrations; upgrade flagging and comparisons must operate only on user-entered offers.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Do not change backend canister logic or data models.",
-    "Do not change existing route paths/URLs besides making `/` show the sign-in page.",
-    "Do not redesign unrelated pages (Trip Builder, Results, Saved, Memory Finder, Groups, Profile) beyond what is necessary to support the new default landing behavior."
+    "Automatically scraping or aggregating prices from third-party ticket/hotel/transport websites.",
+    "Real-time price tracking, alerts, push notifications, or background jobs.",
+    "Implementing actual booking/checkout flows for tickets, hotels, trains, flights, or taxis."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,5 +1,5 @@
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetAlbums, useCreateAlbum } from '@/hooks/useQueries';
+import { useGetUserAlbums, useCreateAlbum } from '@/hooks/useQueries';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +22,7 @@ import UnauthSignInScreen from '@/components/auth/UnauthSignInScreen';
 
 export default function MemoryFinderPage() {
   const { identity } = useInternetIdentity();
-  const { data: albums, isLoading } = useGetAlbums();
+  const { data: albums, isLoading } = useGetUserAlbums();
   const createAlbumMutation = useCreateAlbum();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);

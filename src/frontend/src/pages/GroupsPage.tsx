@@ -1,5 +1,5 @@
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetGroups, useCreateGroup } from '@/hooks/useQueries';
+import { useGetAllGroups, useCreateGroup } from '@/hooks/useQueries';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +23,7 @@ import UnauthSignInScreen from '@/components/auth/UnauthSignInScreen';
 
 export default function GroupsPage() {
   const { identity } = useInternetIdentity();
-  const { data: groups, isLoading } = useGetGroups();
+  const { data: groups, isLoading } = useGetAllGroups();
   const createGroupMutation = useCreateGroup();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -43,7 +43,9 @@ export default function GroupsPage() {
     try {
       const group = await createGroupMutation.mutateAsync({
         groupName: newGroupName,
+        creator: identity.getPrincipal().toString(),
         members: [],
+        comparisonId: null,
       });
       toast.success('Group created successfully');
       setDialogOpen(false);
@@ -179,22 +181,14 @@ export default function GroupsPage() {
               </CardHeader>
               <CardContent>
                 {group.messages.length > 0 ? (
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <MessageCircle className="h-4 w-4 text-muted-foreground mt-1" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-muted-foreground truncate">
-                          {group.messages[0].author?.userName || 'Unknown'}
-                        </p>
-                        <p className="text-sm truncate">{group.messages[0].content}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {group.messages.length} {group.messages.length === 1 ? 'message' : 'messages'}
+                  <div className="flex items-start gap-2">
+                    <MessageCircle className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {group.messages[0].content}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No messages yet</p>
+                  <p className="text-sm text-muted-foreground italic">No messages yet</p>
                 )}
               </CardContent>
             </Card>

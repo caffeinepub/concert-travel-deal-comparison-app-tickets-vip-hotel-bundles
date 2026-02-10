@@ -20,8 +20,8 @@ export default function SignInPage() {
   return (
     <UnauthSignInScreen
       title="Welcome to EOA"
-      description="Sign in to access your concert travel planning tools and saved comparisons."
-      signInMessage="Please sign in with Internet Identity to continue."
+      description="Your secure concert travel planning platform. Access all your trip planning tools with a single secure sign-in."
+      signInMessage="Sign in securely using passkeys with Internet Identity. No passwords required—just fast, secure authentication."
     />
   );
 }

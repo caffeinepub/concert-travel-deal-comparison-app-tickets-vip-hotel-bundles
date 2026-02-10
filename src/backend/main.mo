@@ -2,23 +2,19 @@ import Map "mo:core/Map";
 import Array "mo:core/Array";
 import Iter "mo:core/Iter";
 import Time "mo:core/Time";
-import Text "mo:core/Text";
 import List "mo:core/List";
-import Order "mo:core/Order";
-import Principal "mo:core/Principal";
-import Nat32 "mo:core/Nat32";
-import Nat "mo:core/Nat";
-import Blob "mo:core/Blob";
-import MixinStorage "blob-storage/Mixin";
-import Storage "blob-storage/Storage";
-import Float "mo:core/Float";
 import Runtime "mo:core/Runtime";
-
+import Principal "mo:core/Principal";
+import Order "mo:core/Order";
+import Float "mo:core/Float";
+import Nat "mo:core/Nat";
+import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Storage "blob-storage/Storage";
+import Migration "migration";
 
-// apply the migration function from the migration.mo file in with-clause
-
+(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -148,7 +144,8 @@ actor {
     ticketSources : [Ticket];
     vipPackageOptions : [VIPPackage];
     hotels : [Hotel];
-    bundles : [Bundle];
+    userChoice : ?Bundle;
+    upgradeAlternatives : [Bundle];
   };
 
   type TravelWindow = {
@@ -162,6 +159,13 @@ actor {
     ticketSources : [Ticket];
     vipPackageOptions : [VIPPackage];
     hotels : [Hotel];
+    userChoice : ?BundleInput;
+  };
+
+  type BundleInput = {
+    hotel : Hotel;
+    roomType : RoomType;
+    ticket : Ticket;
   };
 
   public type FriendEntry = {
@@ -315,6 +319,59 @@ actor {
 
   let tripComparisons = Map.empty<Principal, List.List<TripComparison>>();
 
+  func suggestUpgradeAlternatives(ticketSources : [Ticket], hotels : [Hotel], userChoice : ?BundleInput) : [Bundle] {
+    var upgrades = List.empty<Bundle>();
+
+    switch (userChoice) {
+      case (?choice) {
+        let basePrice = choice.ticket.price + choice.roomType.price;
+
+        // Try to find VIP ticket alternatives
+        for (ticket in ticketSources.vals()) {
+          if (ticket.type_ == #vip and ticket.price <= basePrice + 100.0) {
+            upgrades.add({
+              hotel = choice.hotel;
+              roomType = choice.roomType;
+              ticket;
+            });
+          };
+        };
+
+        // Look for better room options within the same hotel
+        for (room in choice.hotel.roomTypes.values()) {
+          if (room.price > choice.roomType.price and room.price <= basePrice + 50.0) {
+            upgrades.add({
+              hotel = choice.hotel;
+              roomType = room;
+              ticket = choice.ticket;
+            });
+          };
+        };
+
+        // Suggest better hotels within 20% price range
+        for (hotel in hotels.values()) {
+          switch (hotel.prices) {
+            case (?prices) {
+              if (prices.minPrice > basePrice and prices.minPrice <= basePrice * 1.2) {
+                if (hotel.roomTypes.size() > 0) {
+                  upgrades.add({
+                    hotel;
+                    roomType = hotel.roomTypes[0];
+                    ticket = choice.ticket;
+                  });
+                };
+              };
+            };
+            case (null) {};
+          };
+        };
+      };
+      case (null) {};
+    };
+
+    upgrades.toArray();
+  };
+
   public shared ({ caller }) func createTripComparison(input : ComparisonInput, foundVIPPackage : Bool) : async TripComparison {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save trip comparisons");
@@ -334,6 +391,19 @@ actor {
       };
     };
 
+    let upgradeAlternatives = suggestUpgradeAlternatives(input.ticketSources, input.hotels, input.userChoice);
+
+    let userChoiceBundle = switch (input.userChoice) {
+      case (null) { null };
+      case (?bundleInput) {
+        ?{
+          hotel = bundleInput.hotel;
+          roomType = bundleInput.roomType;
+          ticket = bundleInput.ticket;
+        };
+      };
+    };
+
     let comparison = {
       id = newBundleId;
       userId = caller;
@@ -345,6 +415,8 @@ actor {
       vipPackageOptions = input.vipPackageOptions;
       hotels = input.hotels;
       bundles;
+      userChoice = userChoiceBundle;
+      upgradeAlternatives;
     };
 
     let currentComparisons = switch (tripComparisons.get(caller)) {
@@ -357,6 +429,10 @@ actor {
   };
 
   public query ({ caller }) func getAllUserComparisons(userId : Principal) : async [TripComparison] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view comparisons");
+    };
+
     if (caller != userId and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own comparisons");
     };
@@ -694,4 +770,3 @@ actor {
     groups.add(groupId, updatedGroup);
   };
 };
-

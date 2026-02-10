@@ -8,6 +8,7 @@ import { Calendar } from 'lucide-react';
 import TicketOffersEditor from '@/components/offers/TicketOffersEditor';
 import VipOffersEditor from '@/components/offers/VipOffersEditor';
 import HotelOffersEditor from '@/components/offers/HotelOffersEditor';
+import TransportOffersEditor, { type TransportOffer } from '@/components/offers/TransportOffersEditor';
 import type { Ticket, VIPPackage, Hotel } from '@/backend';
 
 export interface TripBuilderState {
@@ -20,6 +21,7 @@ export interface TripBuilderState {
   tickets: Ticket[];
   vipPackages: VIPPackage[];
   hotels: Hotel[];
+  transportOffers: TransportOffer[];
 }
 
 export default function TripBuilderPage() {
@@ -34,6 +36,7 @@ export default function TripBuilderPage() {
     tickets: [],
     vipPackages: [],
     hotels: [],
+    transportOffers: [],
   });
 
   const handleCompare = () => {
@@ -158,6 +161,12 @@ export default function TripBuilderPage() {
         <HotelOffersEditor
           hotels={state.hotels}
           onChange={(hotels) => setState({ ...state, hotels })}
+        />
+
+        {/* Transportation Options */}
+        <TransportOffersEditor
+          transportOffers={state.transportOffers}
+          onChange={(transportOffers) => setState({ ...state, transportOffers })}
         />
 
         {/* Compare Button */}

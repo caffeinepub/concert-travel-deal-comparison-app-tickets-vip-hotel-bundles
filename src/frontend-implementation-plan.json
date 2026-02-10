@@ -1,42 +1,131 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Default `/` route to Sign-In screen with “Welcome to EOA” and post-login redirect",
+  "title": "Transport-mode comparison + planned-choice upgrade flagging and autosave",
   "requirements": [
     {
-      "id": "REQ-32",
-      "summary": "Change the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page while keeping all other routes unchanged.",
+      "id": "REQ-47",
+      "summary": "Add multi-mode transportation offers to Trip Builder and include transport costs in bundle totals and cheapest-option detection.",
       "acceptanceCriteria": [
-        "When a user visits `/`, the app shows a sign-in page (not the current Home/Landing page).",
-        "All other existing routes (e.g., `/trip-builder`, `/saved`, `/memory-finder`, `/groups`, `/profile`) remain unchanged and reachable via navigation or direct URL."
+        "Trip Builder has a section to add/edit/remove transportation offers (mode + name/provider + class/comfort label + price + currency).",
+        "Results calculation includes transport cost in the displayed total bundle cost when transport offers are provided.",
+        "If transport offers are provided, the comparison logic can identify the cheapest transport option for the trip (currency-matching with the rest of the bundle).",
+        "All new user-facing labels and helper text related to transport are in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Update the TanStack Router index route (`/`) to render the new dedicated SignInPage component instead of HomePage, without changing any other route paths."
+          "path": "frontend/src/components/offers/TransportOffersEditor.tsx",
+          "operation": "create",
+          "description": "Create a transport offers editor UI (add/edit/remove) supporting mode (plane/train/taxi/ground), provider/name, class/comfort label, price, and currency; implement as a controlled component similar in spirit to existing offers editors. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/SignInPage.tsx",
-          "operation": "create",
-          "description": "Create a dedicated sign-in page component for `/` that displays the unauthenticated sign-in UI (reuse the existing UnauthSignInScreen component) and serves as the new default first screen."
+          "path": "frontend/src/pages/TripBuilderPage.tsx",
+          "operation": "modify",
+          "description": "Extend TripBuilderState to include an array of transport offers, add validation only if needed (transport optional), and wire in the new TransportOffersEditor section with English labels and helper text. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/localComparisonEngine.ts",
+          "operation": "modify",
+          "description": "Extend local bundle generation to incorporate transport offers: if transport offers exist, include transport cost in totalCost and generate comparable bundles across transport modes; also expose a deterministic helper to identify the cheapest transport option under currency-matching rules."
+        },
+        {
+          "path": "frontend/src/components/results/BundleCard.tsx",
+          "operation": "modify",
+          "description": "Update bundle display to include a Transport section (when present) and ensure the displayed total and breakdown reflect transport cost in English."
+        },
+        {
+          "path": "frontend/src/pages/ResultsPage.tsx",
+          "operation": "modify",
+          "description": "Ensure results rendering uses the updated bundle shape (including transport), and surface an English hint when transport offers are present that totals include transport and the cheapest transport option is considered."
         }
       ]
     },
     {
-      "id": "REQ-33",
-      "summary": "Ensure the `/` sign-in page shows the exact heading \"Welcome to EOA\", starts Internet Identity login via a Sign In button, and redirects to `/profile` after successful login.",
+      "id": "REQ-48",
+      "summary": "Implement deterministic better-value upgrade detection from user-entered offers and let users set baseline planned choices before saving.",
       "acceptanceCriteria": [
-        "The sign-in page at `/` visibly displays the heading text exactly: \"Welcome to EOA\".",
-        "No extra or garbled characters appear in the welcome heading text.",
-        "Clicking \"Sign In\" on the `/` page initiates Internet Identity login.",
-        "After a successful login from the `/` page, the user is navigated to `/profile`."
+        "The UI allows the user to indicate which ticket/transport/hotel-room is their planned (baseline) choice for the trip before saving.",
+        "Given a baseline choice, the app flags alternative offers as “better-value upgrades” when they are (a) cheaper than the baseline price AND (b) higher quality than the baseline (based on user-entered quality/class labels and/or hotel star rating/room label).",
+        "Flagged upgrade results are deterministic and come only from the user-entered offers (no external API calls).",
+        "Results UI visibly distinguishes flagged upgrades from the baseline planned choice (English labels)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/SignInPage.tsx",
+          "path": "frontend/src/lib/upgradeDetection.ts",
+          "operation": "create",
+          "description": "Add a deterministic local upgrade detection utility that ranks quality based on user-entered class/comfort labels (tickets/transport) and hotel star rating + room type name/label heuristics; return flagged alternatives only from the user-entered offers with clear category grouping."
+        },
+        {
+          "path": "frontend/src/pages/ResultsPage.tsx",
           "operation": "modify",
-          "description": "Implement sign-in behavior using the existing Internet Identity hook (per the selected \"authorization\" component guidance). Render UnauthSignInScreen (which already includes the exact \"Welcome to EOA\" heading and a Sign In button that calls `login`), and add a redirect to `/profile` when authentication becomes available. Verify the component's usage instructions before implementing."
+          "description": "Add a \"Planned choice\" section allowing users to select baseline ticket, baseline transport (if provided), and baseline hotel room (hotel + room type). Compute and render \"Better-value upgrades\" from local offers using the new upgradeDetection utility; visually distinguish baseline vs upgrades with English labels."
+        },
+        {
+          "path": "frontend/src/components/results/BundleCard.tsx",
+          "operation": "modify",
+          "description": "Add optional visual markers to distinguish when the bundle includes the planned baseline choice or contains a flagged better-value upgrade item (English labels only)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-49",
+      "summary": "On save, persist baseline planned choices plus auto-flagged upgrades, and show those details in saved comparisons views with updated hooks/types.",
+      "acceptanceCriteria": [
+        "Clicking “Save Comparison” persists: (1) the user’s baseline planned choice and (2) the flagged better-value upgrade alternatives.",
+        "Saved comparisons list remains functional, and each comparison detail summary shows an English summary of the baseline planned choice plus counts (or a short list) of auto-saved flagged upgrades by category (tickets/transport/hotel rooms).",
+        "Deleting a comparison still deletes the entire saved comparison including its baseline and flagged upgrade metadata.",
+        "Frontend React Query hooks and types are updated to match the new backend TripComparison/ComparisonInput fields, with no TypeScript errors."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update the save-comparison mutation to include the user's planned baseline selection and the locally flagged upgrade alternatives in the createTripComparison call payload (aligned to updated backend types), and update affected query typings so saved comparisons remain readable without TypeScript errors."
+        },
+        {
+          "path": "frontend/src/pages/ResultsPage.tsx",
+          "operation": "modify",
+          "description": "Wire saving to include (a) the selected baseline planned choices and (b) the computed flagged better-value upgrades; ensure Save Comparison is disabled or shows an English error when baseline selection is missing."
+        },
+        {
+          "path": "frontend/src/pages/SavedComparisonsPage.tsx",
+          "operation": "modify",
+          "description": "Update saved comparisons cards to display an English summary of the saved baseline planned choice (ticket/transport/hotel room) and counts (or short lists) of auto-saved flagged upgrades by category; keep delete flow intact."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Update the saved trips list to remain functional with updated TripComparison fields and show an English one-line summary (baseline + upgrade counts) per saved comparison; keep delete flow intact."
+        },
+        {
+          "path": "frontend/src/backend.idl.ts",
+          "operation": "modify",
+          "description": "Update frontend IDL type definitions to match the new backend TripComparison/ComparisonInput fields used by the UI (planned choices + upgrade alternatives + transport-related fields), ensuring the generated actor typing aligns with updated hooks and pages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-50",
+      "summary": "Ensure all newly introduced transport and upgrade-flagging copy is clear English only and avoids unrelated login/provider text.",
+      "acceptanceCriteria": [
+        "All new UI headings, button labels, helper text, and empty/error states related to: transport offers, “planned choice”, and “better-value upgrades” are in English.",
+        "No new UI strings mention third-party sign-in providers or unrelated login flows."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/offers/TransportOffersEditor.tsx",
+          "operation": "modify",
+          "description": "Audit and refine all transport-editor labels, helper text, placeholders, and empty states to ensure clear English wording and no unrelated auth/provider references. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/ResultsPage.tsx",
+          "operation": "modify",
+          "description": "Audit and refine all planned-choice and better-value upgrade UI copy (errors, helper text, badges/labels) to ensure clear English wording and no unrelated auth/provider references."
+        },
+        {
+          "path": "frontend/src/pages/SavedComparisonsPage.tsx",
+          "operation": "modify",
+          "description": "Audit and refine saved-comparison baseline/upgrade summary labels and empty states to ensure clear English wording and no unrelated auth/provider references."
         }
       ]
     }

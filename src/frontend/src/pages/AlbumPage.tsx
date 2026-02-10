@@ -12,7 +12,7 @@ import PhotoGrid from '@/components/memory/PhotoGrid';
 export default function AlbumPage() {
   const navigate = useNavigate();
   const { albumId } = useParams({ strict: false }) as { albumId: string };
-  const { data: album, isLoading } = useGetAlbum(albumId);
+  const { data: album, isLoading } = useGetAlbum(BigInt(albumId));
   const deleteMutation = useDeleteAlbum();
 
   const handleDeleteAlbum = async () => {

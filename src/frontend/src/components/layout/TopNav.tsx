@@ -16,14 +16,17 @@ export default function TopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => routerState.location.pathname === path;
+  const isAuthenticated = !!identity;
 
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/trip-builder', label: 'RouteRally' },
-    { path: '/saved', label: 'CostCompass' },
-    { path: '/memory-finder', label: 'EchoPass' },
-    { path: '/groups', label: 'NovaTrips' },
-  ];
+  // Define nav items based on auth state
+  const navItems = isAuthenticated
+    ? [
+        { path: '/trip-builder', label: 'RouteRally' },
+        { path: '/saved', label: 'CostCompass' },
+        { path: '/memory-finder', label: 'EchoPass' },
+        { path: '/groups', label: 'NovaTrips' },
+      ]
+    : [];
 
   const handleNavigate = (path: string) => {
     navigate({ to: path });
@@ -36,7 +39,7 @@ export default function TopNav() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
             <button
-              onClick={() => handleNavigate('/')}
+              onClick={() => handleNavigate(isAuthenticated ? '/profile' : '/')}
               className="flex items-center gap-3 font-bold text-xl hover:opacity-80 transition-opacity"
             >
               <img
@@ -59,7 +62,7 @@ export default function TopNav() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            {identity && profile && (
+            {isAuthenticated && profile && (
               <>
                 <Button
                   variant={isActive('/profile') ? 'secondary' : 'ghost'}
@@ -99,14 +102,14 @@ export default function TopNav() {
                       {item.label}
                     </Button>
                   ))}
-                  {identity && (
+                  {isAuthenticated && profile && (
                     <Button
                       variant={isActive('/profile') ? 'secondary' : 'ghost'}
                       onClick={() => handleNavigate('/profile')}
                       className="justify-start"
                     >
                       <User className="mr-2 h-4 w-4" />
-                      VibeVoyager
+                      {profile.name}
                     </Button>
                   )}
                 </nav>

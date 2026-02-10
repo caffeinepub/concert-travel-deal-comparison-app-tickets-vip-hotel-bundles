@@ -2,11 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-make-the-login-sign-in-screen-the-first-default-screen-users-see-by-changing-the-index-route-to-render-a-dedicated-sign-in-page-instead-of-the-current-home-landing-page",
-      "featureTitle": "Make the login/sign-in screen the first (default) screen users see by changing the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.",
+      "featureId": "feature-add-transportation-options-to-the-trip-building-flow-so-users-can-compare-total-trip-cost-across-multiple-transport-modes-at-minimum-plane-train-and-taxi-ground-transport-and-carry-these-inputs-through-to-results-and-saving",
+      "featureTitle": "Add transportation options to the trip-building flow so users can compare total trip cost across multiple transport modes (at minimum: plane, train, and taxi/ground transport) and carry these inputs through to results and saving.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/SignInPage.tsx"
+        "frontend/src/components/offers/TransportOffersEditor.tsx",
+        "frontend/src/components/results/BundleCard.tsx",
+        "frontend/src/lib/localComparisonEngine.ts",
+        "frontend/src/pages/ResultsPage.tsx",
+        "frontend/src/pages/TripBuilderPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,15 +21,17 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-32"
+        "REQ-47"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-default-sign-in-page-shown-at-displays-the-exact-heading-text-welcome-to-eoa-english-text-exact-casing-and-includes-a-working-sign-in-button-that-initiates-internet-identity-login-after-a-successful-login-redirect-the-user-to-profile",
-      "featureTitle": "Ensure the default sign-in page shown at `/` displays the exact heading text \"Welcome to EOA\" (English text, exact casing) and includes a working Sign In button that initiates Internet Identity login; after a successful login, redirect the user to `/profile`.",
+      "featureId": "feature-implement-better-value-upgrade-detection-in-the-local-comparison-logic-so-the-app-can-flag-higher-quality-options-that-are-cheaper-than-the-user-s-planned-choice-tickets-e-g-front-row-transport-e-g-first-class-hotels-e-g-higher-star-rating-nicer-room-type-using-only-the-offers-the-user-entered",
+      "featureTitle": "Implement better-value upgrade detection in the local comparison logic so the app can flag higher-quality options that are cheaper than the user’s planned choice (tickets: e.g., “front row”; transport: e.g., “first class”; hotels: e.g., higher star rating / nicer room type), using only the offers the user entered.",
       "files": [
-        "frontend/src/pages/SignInPage.tsx"
+        "frontend/src/components/results/BundleCard.tsx",
+        "frontend/src/lib/upgradeDetection.ts",
+        "frontend/src/pages/ResultsPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -38,7 +43,52 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-33"
+        "REQ-48"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-when-saving-a-trip-comparison-auto-save-the-flagged-upgrade-alternatives-alongside-the-user-s-originally-planned-choice-and-surface-both-in-the-saved-comparisons-costcompass-view",
+      "featureTitle": "When saving a trip comparison, auto-save the flagged upgrade alternatives alongside the user’s originally planned choice, and surface both in the saved-comparisons (CostCompass) view.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/ProfilePage.tsx",
+        "frontend/src/pages/ResultsPage.tsx",
+        "frontend/src/pages/SavedComparisonsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-49"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-any-new-or-modified-user-facing-copy-introduced-for-upgrade-flagging-and-transportation-comparison-is-clear-english-and-does-not-introduce-non-english-or-garbled-text",
+      "featureTitle": "Ensure any new or modified user-facing copy introduced for upgrade flagging and transportation comparison is clear English and does not introduce non-English or garbled text.",
+      "files": [
+        "frontend/src/components/offers/TransportOffersEditor.tsx",
+        "frontend/src/pages/ResultsPage.tsx",
+        "frontend/src/pages/SavedComparisonsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-50"
       ],
       "confidence": "high"
     }

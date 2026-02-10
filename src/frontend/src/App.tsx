@@ -12,11 +12,14 @@ import GroupsPage from './pages/GroupsPage';
 import GroupDetailPage from './pages/GroupDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import AppLayout from './components/layout/AppLayout';
+import RequireAuth from './components/auth/RequireAuth';
 
 const rootRoute = createRootRoute({
   component: () => (
     <AppLayout>
-      <Outlet />
+      <RequireAuth>
+        <Outlet />
+      </RequireAuth>
     </AppLayout>
   ),
 });

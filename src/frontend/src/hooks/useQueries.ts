@@ -3,22 +3,24 @@ import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
 import type { 
   UserProfile, 
+  FriendEntry, 
   TripComparison, 
-  ComparisonInput, 
   Album, 
   PhotoInput,
   Group,
   GroupMember,
   NewMessage,
-  FriendEntry
+  ComparisonInput,
+  BundleInput,
 } from '@/backend';
 import type { TripBuilderState } from '@/pages/TripBuilderPage';
 import type { Bundle } from '@/lib/localComparisonEngine';
+import type { UpgradeAlternatives } from '@/lib/upgradeDetection';
 import { calculateTravelWindow } from '@/lib/tripWindow';
 
+// User Profile Queries
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
 
   const query = useQuery<UserProfile | null>({
     queryKey: ['currentUserProfile'],
@@ -26,7 +28,7 @@ export function useGetCallerUserProfile() {
       if (!actor) throw new Error('Actor not available');
       return actor.getCallerUserProfile();
     },
-    enabled: !!actor && !actorFetching && !!identity,
+    enabled: !!actor && !actorFetching,
     retry: false,
   });
 
@@ -37,7 +39,7 @@ export function useGetCallerUserProfile() {
   };
 }
 
-export function useSaveCallerUserProfile() {
+export function useSaveUserProfile() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
@@ -67,6 +69,7 @@ export function useSetParentPermission() {
   });
 }
 
+// Friend Management
 export function useAddFriend() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -97,6 +100,7 @@ export function useRemoveFriend() {
   });
 }
 
+// Trip Comparison Queries
 export function useGetUserComparisons() {
   const { actor, isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -107,7 +111,7 @@ export function useGetUserComparisons() {
       if (!actor || !identity) return [];
       return actor.getAllUserComparisons(identity.getPrincipal());
     },
-    enabled: !!actor && !actorFetching && !!identity,
+    enabled: !!actor && !!identity && !actorFetching,
   });
 }
 
@@ -117,9 +121,19 @@ export function useSaveTripComparison() {
   const { identity } = useInternetIdentity();
 
   return useMutation({
-    mutationFn: async ({ tripData, bundles }: { tripData: TripBuilderState; bundles: Bundle[] }) => {
+    mutationFn: async ({ 
+      tripData, 
+      bundles,
+      selectedBundle,
+      upgrades,
+    }: { 
+      tripData: TripBuilderState; 
+      bundles: Bundle[];
+      selectedBundle: Bundle;
+      upgrades: UpgradeAlternatives;
+    }) => {
       if (!actor) throw new Error('Actor not available');
-      if (!identity) throw new Error('Must be signed in to save');
+      if (!identity) throw new Error('Not authenticated');
 
       const travelWindow = calculateTravelWindow(
         tripData.concertDate,
@@ -127,16 +141,23 @@ export function useSaveTripComparison() {
         tripData.daysAfter
       );
 
+      // Convert Bundle to BundleInput for backend
+      const userChoice: BundleInput = {
+        ticket: selectedBundle.ticket,
+        hotel: selectedBundle.hotel,
+        roomType: selectedBundle.roomType,
+      };
+
       const input: ComparisonInput = {
         event: `${tripData.eventName} - ${tripData.eventCity}`,
         travelWindow,
         ticketSources: tripData.tickets,
         vipPackageOptions: tripData.vipPackages,
         hotels: tripData.hotels,
+        userChoice,
       };
 
       const foundVIPPackage = tripData.vipPackages.length > 0;
-
       return actor.createTripComparison(input, foundVIPPackage);
     },
     onSuccess: () => {
@@ -160,32 +181,31 @@ export function useDeleteComparison() {
   });
 }
 
-// Memory Finder hooks
-export function useGetAlbums() {
+// Album Queries
+export function useGetUserAlbums() {
   const { actor, isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
 
   return useQuery<Album[]>({
-    queryKey: ['albums', identity?.getPrincipal().toString()],
+    queryKey: ['userAlbums', identity?.getPrincipal().toString()],
     queryFn: async () => {
       if (!actor || !identity) return [];
       return actor.getAllAlbums(identity.getPrincipal());
     },
-    enabled: !!actor && !actorFetching && !!identity,
+    enabled: !!actor && !!identity && !actorFetching,
   });
 }
 
-export function useGetAlbum(albumId: string) {
+export function useGetAlbum(albumId: bigint | null) {
   const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
 
   return useQuery<Album | null>({
-    queryKey: ['album', albumId],
+    queryKey: ['album', albumId?.toString()],
     queryFn: async () => {
-      if (!actor || !identity) return null;
-      return actor.getAlbum(BigInt(albumId));
+      if (!actor || !albumId) return null;
+      return actor.getAlbum(albumId);
     },
-    enabled: !!actor && !actorFetching && !!identity && !!albumId,
+    enabled: !!actor && !!albumId && !actorFetching,
   });
 }
 
@@ -199,7 +219,7 @@ export function useCreateAlbum() {
       return actor.createAlbum(title);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['albums'] });
+      queryClient.invalidateQueries({ queryKey: ['userAlbums'] });
     },
   });
 }
@@ -215,6 +235,7 @@ export function useUploadPhoto() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['album', variables.albumId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['userAlbums'] });
     },
   });
 }
@@ -244,13 +265,13 @@ export function useDeleteAlbum() {
       return actor.deleteAlbum(albumId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['albums'] });
+      queryClient.invalidateQueries({ queryKey: ['userAlbums'] });
     },
   });
 }
 
-// Groups hooks
-export function useGetGroups() {
+// Group Queries
+export function useGetAllGroups() {
   const { actor, isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
 
@@ -260,34 +281,43 @@ export function useGetGroups() {
       if (!actor || !identity) return [];
       return actor.getAllGroups();
     },
-    enabled: !!actor && !actorFetching && !!identity,
+    enabled: !!actor && !!identity && !actorFetching,
+    refetchInterval: 5000,
   });
 }
 
-export function useGetGroup(groupId: string) {
+export function useGetGroup(groupId: bigint | null) {
   const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
 
   return useQuery<Group | null>({
-    queryKey: ['group', groupId],
+    queryKey: ['group', groupId?.toString()],
     queryFn: async () => {
-      if (!actor || !identity) return null;
-      return actor.getGroup(BigInt(groupId));
+      if (!actor || !groupId) return null;
+      return actor.getGroup(groupId);
     },
-    enabled: !!actor && !actorFetching && !!identity && !!groupId,
-    refetchInterval: 5000, // Poll every 5 seconds for new messages
+    enabled: !!actor && !!groupId && !actorFetching,
+    refetchInterval: 5000,
   });
 }
 
 export function useCreateGroup() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
-  const { identity } = useInternetIdentity();
 
   return useMutation({
-    mutationFn: async ({ groupName, members }: { groupName: string; members: GroupMember[] }) => {
-      if (!actor || !identity) throw new Error('Actor not available');
-      return actor.createGroup(groupName, identity.getPrincipal(), members, null);
+    mutationFn: async ({
+      groupName,
+      creator,
+      members,
+      comparisonId,
+    }: {
+      groupName: string;
+      creator: string;
+      members: GroupMember[];
+      comparisonId: bigint | null;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createGroup(groupName, creator as any, members, comparisonId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
@@ -295,7 +325,7 @@ export function useCreateGroup() {
   });
 }
 
-export function usePostMessage() {
+export function useAddGroupMessage() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
@@ -306,6 +336,7 @@ export function usePostMessage() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['group', variables.groupId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['groups'] });
     },
   });
 }

@@ -3,6 +3,7 @@ import { useGetCallerUserProfile, useGetUserComparisons, useDeleteComparison } f
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User, Calendar, Trash2 } from 'lucide-react';
+import { User, Calendar, Trash2, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import UnauthSignInScreen from '@/components/auth/UnauthSignInScreen';
 
@@ -127,54 +128,72 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {comparisons.map((comparison) => (
-                  <div
-                    key={comparison.id.toString()}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">{comparison.event}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(Number(comparison.travelWindow.checkIn) / 1000000).toLocaleDateString()} •{' '}
-                        {comparison.bundles.length} {comparison.bundles.length === 1 ? 'bundle' : 'bundles'}
-                      </p>
+                {comparisons.map((comparison) => {
+                  const upgradeCount = comparison.upgradeAlternatives.length;
+                  const hasPlannedChoice = comparison.userChoice !== null && comparison.userChoice !== undefined;
+
+                  return (
+                    <div
+                      key={comparison.id.toString()}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium">{comparison.event}</p>
+                          {hasPlannedChoice && (
+                            <Badge variant="outline" className="text-xs">Planned</Badge>
+                          )}
+                          {upgradeCount > 0 && (
+                            <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                              <TrendingUp className="h-3 w-3 mr-1" />
+                              {upgradeCount} upgrade{upgradeCount === 1 ? '' : 's'}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(Number(comparison.travelWindow.checkIn) / 1000000).toLocaleDateString()}
+                          {hasPlannedChoice && comparison.userChoice && (
+                            <> • {comparison.userChoice.ticket.name} + {comparison.userChoice.hotel.name}</>
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate({ to: '/saved' })}
+                        >
+                          View
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Trip?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete this saved trip. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(comparison.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate({ to: '/saved' })}
-                      >
-                        View
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Trip?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete this saved trip. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(comparison.id)}>
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>

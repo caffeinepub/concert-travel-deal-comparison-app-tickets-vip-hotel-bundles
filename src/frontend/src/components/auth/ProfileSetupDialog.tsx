@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useSaveCallerUserProfile } from '@/hooks/useQueries';
+import { useGetCallerUserProfile, useSaveUserProfile } from '@/hooks/useQueries';
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { branding } from '@/config/branding';
 export default function ProfileSetupDialog() {
   const { identity } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  const saveMutation = useSaveCallerUserProfile();
+  const saveMutation = useSaveUserProfile();
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [open, setOpen] = useState(false);

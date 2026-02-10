@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useGetGroup, usePostMessage, useLeaveGroup, useGetCallerUserProfile } from '@/hooks/useQueries';
+import { useGetGroup, useAddGroupMessage, useLeaveGroup, useGetCallerUserProfile } from '@/hooks/useQueries';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,8 +16,8 @@ export default function GroupDetailPage() {
   const { identity } = useInternetIdentity();
   const { data: profile } = useGetCallerUserProfile();
   const { groupId } = useParams({ strict: false }) as { groupId: string };
-  const { data: group, isLoading } = useGetGroup(groupId);
-  const postMutation = usePostMessage();
+  const { data: group, isLoading } = useGetGroup(BigInt(groupId));
+  const postMutation = useAddGroupMessage();
   const leaveMutation = useLeaveGroup();
 
   const handlePostMessage = async (content: string) => {

@@ -2,6 +2,7 @@ import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { useGetUserComparisons, useDeleteComparison } from '@/hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Trash2 } from 'lucide-react';
+import { Calendar, Trash2, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import UnauthSignInScreen from '@/components/auth/UnauthSignInScreen';
 
@@ -93,85 +94,108 @@ export default function SavedComparisonsPage() {
       </div>
 
       <div className="space-y-6">
-        {comparisons.map((comparison) => (
-          <Card key={comparison.id.toString()}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-2xl">{comparison.event}</CardTitle>
-                  <CardDescription className="flex items-center gap-4 text-base">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {new Date(Number(comparison.travelWindow.checkIn) / 1000000).toLocaleDateString()}
-                    </span>
-                  </CardDescription>
+        {comparisons.map((comparison) => {
+          const upgradeCount = comparison.upgradeAlternatives.length;
+          const hasPlannedChoice = comparison.userChoice !== null && comparison.userChoice !== undefined;
+
+          return (
+            <Card key={comparison.id.toString()}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-2xl">{comparison.event}</CardTitle>
+                    <CardDescription className="flex items-center gap-4 text-base">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(Number(comparison.travelWindow.checkIn) / 1000000).toLocaleDateString()}
+                      </span>
+                    </CardDescription>
+                  </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Comparison?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete this saved comparison. This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(comparison.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Comparison?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete this saved comparison. This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(comparison.id)}>
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-3 text-sm">
-                  <div>
-                    <p className="text-muted-foreground mb-1">Ticket Options</p>
-                    <p className="font-medium">{comparison.ticketSources.length} sources</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground mb-1">Hotel Options</p>
-                    <p className="font-medium">{comparison.hotels.length} hotels</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground mb-1">VIP Packages</p>
-                    <p className="font-medium">{comparison.vipPackageOptions.length} options</p>
-                  </div>
-                </div>
-                {comparison.bundles.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <p className="text-sm text-muted-foreground mb-2">Best Bundle</p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{comparison.bundles[0].hotel.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {comparison.bundles[0].ticket.name} • {comparison.bundles[0].roomType.name}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold">
-                          {comparison.bundles[0].ticket.currency}{' '}
-                          {(comparison.bundles[0].ticket.price + comparison.bundles[0].roomType.price).toFixed(2)}
-                        </p>
-                      </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-3 text-sm">
+                    <div>
+                      <p className="text-muted-foreground mb-1">Ticket Options</p>
+                      <p className="font-medium">{comparison.ticketSources.length} sources</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground mb-1">Hotel Options</p>
+                      <p className="font-medium">{comparison.hotels.length} hotels</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground mb-1">VIP Packages</p>
+                      <p className="font-medium">{comparison.vipPackageOptions.length} options</p>
                     </div>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+
+                  {hasPlannedChoice && comparison.userChoice && (
+                    <div className="pt-4 border-t">
+                      <div className="flex items-center gap-2 mb-2">
+                        <p className="text-sm font-medium">Your Planned Choice</p>
+                        <Badge variant="outline" className="text-xs">Baseline</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{comparison.userChoice.hotel.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {comparison.userChoice.ticket.name} • {comparison.userChoice.roomType.name}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold">
+                            {comparison.userChoice.ticket.currency}{' '}
+                            {(comparison.userChoice.ticket.price + comparison.userChoice.roomType.price).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {upgradeCount > 0 && (
+                    <div className="pt-4 border-t">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                          Better-Value Upgrades Found
+                        </p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {upgradeCount} upgrade option{upgradeCount === 1 ? '' : 's'} flagged that {upgradeCount === 1 ? 'is' : 'are'} cheaper and higher quality than your planned choice
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

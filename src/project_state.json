@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
-  "summary": "Build a concert-travel deal comparison app that compares total trip cost across many ticketing sources, VIP packages, and lodging/travel providers, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding.",
+  "projectStateVersion": 35,
+  "summary": "Build a concert-travel deal comparison app that compares total trip cost across tickets, VIP packages, lodging, and multiple transportation modes (plane/train/taxi, etc.), and can flag and auto-save better-value upgrades (better seats, first class, nicer rooms) than the user’s originally saved choices, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding.",
   "architectural_notes": [
     "Core value: optimize total trip cost (tickets + VIP + lodging) rather than ticket price alone.",
     "Bundle generation requires integrating event ticket sources, VIP package availability, and hotel search/pricing.",
@@ -18,7 +18,10 @@
     "AI was unable to complete the build request; user asked to retry ('Try doing it again').",
     "Current logo does not clearly show a readable preserved airplane ticket and visible concert ticket within the old passport motif; user requested a fix.",
     "Login page logo is rendered too small; user wants it sized to fit/fill the logo box.",
-    "Welcome/sign-in screen copy is not matching desired text; user wants it to read \"Welcome to EOA\" (currently includes garbled/extra characters like \"W\")."
+    "Welcome/sign-in screen copy is not matching desired text; user wants it to read \"Welcome to EOA\" (currently includes garbled/extra characters like \"W\").",
+    "Login/auth flow currently forces account creation and/or redirects users to Google/Instagram login instead of the intended sign-in experience.",
+    "On the default onboarding/sign-up screen, the top \"Sign in\" button routes users to an email/third-party quick sign-in hub (TikTok/YouTube/Gmail/etc.) instead of the intended sign-in method.",
+    "Auth/session handling issue: logging out of the external email/third-party quick sign-in provider logs the user out of TripTally unexpectedly (session not independent/persistent)."
   ],
   "isFixRequest": false,
   "existing_features": [
@@ -269,6 +272,134 @@
         "REQ-33"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-ensure-the-app-s-sign-in-flow-uses-internet-identity-as-the-only-authentication-method-and-does-not-redirect-users-to-any-google-instagram-or-other-third-party-login-account-creation-pages",
+      "title": "Ensure the app’s sign-in flow uses Internet Identity as the only authentication method and does not redirect users to any Google/Instagram (or other third-party) login/account-creation pages.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-the-internet-identity-provider-configuration-so-it-cannot-accidentally-resolve-to-a-non-internet-identity-provider-if-the-configured-provider-url-is-missing-invalid-fall-back-to-the-official-internet-identity-provider-url-and-surface-a-clear-english-error-if-login-cannot-start",
+      "title": "Harden the Internet Identity provider configuration so it cannot accidentally resolve to a non-Internet-Identity provider: if the configured provider URL is missing/invalid, fall back to the official Internet Identity provider URL, and surface a clear English error if login cannot start.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-unauthenticated-sign-in-screen-component-to-render-the-provided-title-prop-and-keep-all-user-facing-copy-in-english-rather-than-hardcoding-a-heading-that-can-become-inconsistent-across-pages",
+      "title": "Fix the unauthenticated sign-in screen component to render the provided title prop (and keep all user-facing copy in English), rather than hardcoding a heading that can become inconsistent across pages.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-the-previous-deployment-failure-and-re-run-the-build-deploy-so-the-current-project-deploys-successfully",
+      "title": "Investigate the previous deployment failure and re-run the build/deploy so the current project deploys successfully.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-require-authentication-before-a-user-can-access-app-features-treat-the-experience-as-a-phone-app-style-you-must-sign-up-sign-in-first-flow-when-an-unauthenticated-user-navigates-to-any-non-auth-entry-route-e-g-home-trip-builder-results-saved-memory-finder-groups-profile-redirect-them-to-the-default-sign-in-route-and-do-not-allow-the-protected-page-content-to-render-until-authenticated",
+      "title": "Require authentication before a user can access app features (treat the experience as a phone-app-style “you must sign up/sign in first” flow): when an unauthenticated user navigates to any non-auth entry route (e.g., /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile), redirect them to the default sign-in route (/) and do not allow the protected page content to render until authenticated.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-default-sign-in-screen-at-to-read-like-a-standard-mobile-app-onboarding-sign-up-page-using-english-copy-clearly-present-that-the-user-can-create-an-account-or-sign-in-via-internet-identity-passkeys-and-ensure-the-primary-call-to-action-is-phrased-accordingly-e-g-create-account-sign-in",
+      "title": "Update the default sign-in screen at (/) to read like a standard mobile app onboarding/sign-up page using English copy: clearly present that the user can create an account or sign in via Internet Identity (passkeys), and ensure the primary call-to-action is phrased accordingly (e.g., “Create account / Sign in”).",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-unauthenticated-sign-in-screen-component-to-render-the-provided-props-for-its-heading-title-rather-than-hardcoding-the-heading-text-so-different-pages-can-display-consistent-intentional-onboarding-headings-while-staying-in-english",
+      "title": "Fix the unauthenticated sign-in screen component to render the provided props for its heading/title rather than hardcoding the heading text, so different pages can display consistent, intentional onboarding headings while staying in English.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-top-navigation-labeling-behavior-so-it-does-not-misleadingly-present-the-default-route-as-home-when-it-is-the-sign-in-onboarding-screen-ensure-the-nav-item-label-for-is-accurate-for-unauthenticated-users-english-and-navigation-remains-functional-on-desktop-and-mobile-breakpoints",
+      "title": "Update top navigation labeling/behavior so it does not misleadingly present the default route (/) as “Home” when it is the sign-in/onboarding screen; ensure the nav item label for (/) is accurate for unauthenticated users (English), and navigation remains functional on desktop and mobile breakpoints.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-default-sign-in-page-at-to-display-the-exact-heading-text-welcome-to-eoa-english-text-exact-casing-and-ensure-the-rest-of-the-onboarding-copy-is-clear-english-and-consistent-with-an-internet-identity-passkey-sign-in-experience-no-mention-of-email-social-provider-sign-in",
+      "title": "Update the default sign-in page at `/` to display the exact heading text \"Welcome to EOA\" (English text, exact casing) and ensure the rest of the onboarding copy is clear English and consistent with an Internet Identity (passkey) sign-in experience (no mention of email/social-provider sign-in).",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-topnav-sign-in-action-for-unauthenticated-users-uses-the-same-internet-identity-login-flow-as-the-main-sign-in-page-and-does-not-navigate-users-to-any-email-social-provider-login-hub-or-third-party-authentication-screen",
+      "title": "Ensure the TopNav \"Sign In\" action for unauthenticated users uses the same Internet Identity login flow as the main sign-in page and does not navigate users to any email/social-provider login hub or third-party authentication screen.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-the-frontend-build-runtime-configuration-so-the-internet-identity-provider-url-cannot-be-missing-or-resolve-to-a-non-internet-identity-provider-ensure-the-value-used-by-the-login-flow-is-always-defined-and-defaults-to-the-official-internet-identity-provider-url-when-misconfigured",
+      "title": "Harden the frontend build/runtime configuration so the Internet Identity provider URL cannot be missing or resolve to a non-Internet-Identity provider: ensure the value used by the login flow is always defined and defaults to the official Internet Identity provider URL when misconfigured.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-prevent-auth-session-coupling-with-any-external-email-social-provider-sign-in-by-ensuring-the-app-s-authenticated-session-is-based-only-on-internet-identity-so-logging-out-of-an-external-provider-e-g-google-cannot-log-the-user-out-of-this-app",
+      "title": "Prevent auth/session coupling with any external email/social-provider sign-in by ensuring the app’s authenticated session is based only on Internet Identity, so logging out of an external provider (e.g., Google) cannot log the user out of this app.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-transportation-options-to-the-trip-building-flow-so-users-can-compare-total-trip-cost-across-multiple-transport-modes-at-minimum-plane-train-and-taxi-ground-transport-and-carry-these-inputs-through-to-results-and-saving",
+      "title": "Add transportation options to the trip-building flow so users can compare total trip cost across multiple transport modes (at minimum: plane, train, and taxi/ground transport) and carry these inputs through to results and saving.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-better-value-upgrade-detection-in-the-local-comparison-logic-so-the-app-can-flag-higher-quality-options-that-are-cheaper-than-the-user-s-planned-choice-tickets-e-g-front-row-transport-e-g-first-class-hotels-e-g-higher-star-rating-nicer-room-type-using-only-the-offers-the-user-entered",
+      "title": "Implement better-value upgrade detection in the local comparison logic so the app can flag higher-quality options that are cheaper than the user’s planned choice (tickets: e.g., “front row”; transport: e.g., “first class”; hotels: e.g., higher star rating / nicer room type), using only the offers the user entered.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-saving-a-trip-comparison-auto-save-the-flagged-upgrade-alternatives-alongside-the-user-s-originally-planned-choice-and-surface-both-in-the-saved-comparisons-costcompass-view",
+      "title": "When saving a trip comparison, auto-save the flagged upgrade alternatives alongside the user’s originally planned choice, and surface both in the saved-comparisons (CostCompass) view.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-any-new-or-modified-user-facing-copy-introduced-for-upgrade-flagging-and-transportation-comparison-is-clear-english-and-does-not-introduce-non-english-or-garbled-text",
+      "title": "Ensure any new or modified user-facing copy introduced for upgrade flagging and transportation comparison is clear English and does not introduce non-English or garbled text.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -394,6 +525,44 @@
       "id": "AR-23",
       "summary": "Make the login/sign-in page the first (default) screen users see, and ensure it displays the heading text \"Welcome to EOA\"",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Fix authentication flow so users are not forced to create an account or redirected to Google/Instagram login; use the intended sign-in method consistently",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add a mobile-app-style sign-up/sign-in page that lets users create an account themselves and optionally use email to fast-track sign-in (social-media-style onboarding UX)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "When a user saves a trip (tickets/VIP/hotel/transport), automatically flag better-value upgrades (e.g., front-row seats, first-class tickets, nicer hotel rooms) that are cheaper than what they planned to pay",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Extend trip cost comparison beyond flights to include other transportation options (e.g., train and taxis/ground transport) and choose the cheapest total option",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "If the system flags a better ticket/deal, auto-save the flagged alternative alongside the user’s originally saved ticket/deal (not just the box-office saved choice)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Extend the backend trip-comparison data model so a saved TripComparison can (a) store the user’s originally planned/saved choices and (b) store a set of auto-flagged “better-value upgrades” (e.g., better seats/first class/nicer room) that are cheaper than the user’s planned choice.",
+      "reqIds": [
+        "REQ-46"
+      ],
       "status": "pending"
     }
   ],

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Hotel, Ticket, Star, ExternalLink } from 'lucide-react';
+import { Hotel, Ticket, Star, ExternalLink, Plane, TrendingUp } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import PurchaseConsentGate from '@/components/safety/PurchaseConsentGate';
 import type { Bundle } from '@/lib/localComparisonEngine';
@@ -13,6 +13,8 @@ interface BundleCardProps {
   travelers: number;
   nights: number;
   rank: number;
+  isPlannedChoice?: boolean;
+  isBetterValueUpgrade?: boolean;
 }
 
 function getTicketTypeLabel(type: TicketType): string {
@@ -21,20 +23,52 @@ function getTicketTypeLabel(type: TicketType): string {
   return 'Unknown';
 }
 
-export default function BundleCard({ bundle, travelers, nights, rank }: BundleCardProps) {
+function getTransportModeLabel(mode: string): string {
+  const labels: Record<string, string> = {
+    plane: 'Flight',
+    train: 'Train',
+    taxi: 'Taxi',
+    ground: 'Ground Transport',
+  };
+  return labels[mode] || mode;
+}
+
+export default function BundleCard({ 
+  bundle, 
+  travelers, 
+  nights, 
+  rank,
+  isPlannedChoice = false,
+  isBetterValueUpgrade = false,
+}: BundleCardProps) {
   const perPersonCost = bundle.totalCost / travelers;
   const isOfficialVIP = bundle.isOfficialVIP;
   const ticketTypeLabel = getTicketTypeLabel(bundle.ticket.type);
 
   return (
-    <Card className="border-2 hover:border-primary/50 transition-colors">
+    <Card className={`border-2 transition-colors ${
+      isPlannedChoice ? 'border-primary bg-primary/5' : 
+      isBetterValueUpgrade ? 'border-green-500/50 bg-green-500/5' :
+      'hover:border-primary/50'
+    }`}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge variant={rank === 1 ? 'default' : 'secondary'}>
                 #{rank}
               </Badge>
+              {isPlannedChoice && (
+                <Badge className="bg-primary/10 text-primary border-primary/20">
+                  Your Planned Choice
+                </Badge>
+              )}
+              {isBetterValueUpgrade && (
+                <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Better Value Upgrade
+                </Badge>
+              )}
               {isOfficialVIP && (
                 <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">
                   Official VIP
@@ -91,6 +125,25 @@ export default function BundleCard({ bundle, travelers, nights, rank }: BundleCa
             </p>
           </div>
         </div>
+
+        {/* Transport if present */}
+        {bundle.transport && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Plane className="h-4 w-4" />
+                <span>Transportation</span>
+              </div>
+              <div className="pl-6">
+                <p className="font-medium">{bundle.transport.provider}</p>
+                <p className="text-sm text-muted-foreground">
+                  {getTransportModeLabel(bundle.transport.mode)} • {bundle.transport.classLabel} • {formatCurrency(bundle.transport.price, bundle.transport.currency)}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* VIP Package if present */}
         {bundle.vipPackage && (

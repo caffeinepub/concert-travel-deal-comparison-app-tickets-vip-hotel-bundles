@@ -91,14 +91,6 @@ export const Ticket = IDL.Record({
   'currency' : IDL.Text,
   'price' : IDL.Float64,
 });
-export const VIPPackage = IDL.Record({
-  'id' : IDL.Nat,
-  'exclusivePerks' : IDL.Opt(IDL.Text),
-  'name' : IDL.Text,
-  'inclusions' : IDL.Vec(IDL.Text),
-  'currency' : IDL.Text,
-  'price' : IDL.Float64,
-});
 export const AmenityCategory = IDL.Variant({
   'transportation' : IDL.Null,
   'safetyAndSecurity' : IDL.Null,
@@ -162,10 +154,24 @@ export const Hotel = IDL.Record({
   'checkOutTime' : IDL.Opt(IDL.Text),
   'location' : IDL.Opt(GeoLocation),
 });
+export const BundleInput = IDL.Record({
+  'ticket' : Ticket,
+  'hotel' : Hotel,
+  'roomType' : RoomType,
+});
+export const VIPPackage = IDL.Record({
+  'id' : IDL.Nat,
+  'exclusivePerks' : IDL.Opt(IDL.Text),
+  'name' : IDL.Text,
+  'inclusions' : IDL.Vec(IDL.Text),
+  'currency' : IDL.Text,
+  'price' : IDL.Float64,
+});
 export const TravelWindow = IDL.Record({ 'checkIn' : Time, 'checkOut' : Time });
 export const ComparisonInput = IDL.Record({
   'ticketSources' : IDL.Vec(Ticket),
   'event' : IDL.Text,
+  'userChoice' : IDL.Opt(BundleInput),
   'vipPackageOptions' : IDL.Vec(VIPPackage),
   'hotels' : IDL.Vec(Hotel),
   'travelWindow' : TravelWindow,
@@ -179,9 +185,10 @@ export const TripComparison = IDL.Record({
   'id' : IDL.Nat,
   'userId' : IDL.Principal,
   'createdAt' : Time,
-  'bundles' : IDL.Vec(Bundle),
+  'upgradeAlternatives' : IDL.Vec(Bundle),
   'ticketSources' : IDL.Vec(Ticket),
   'event' : IDL.Text,
+  'userChoice' : IDL.Opt(Bundle),
   'vipPackageOptions' : IDL.Vec(VIPPackage),
   'hotels' : IDL.Vec(Hotel),
   'travelWindow' : TravelWindow,
@@ -351,14 +358,6 @@ export const idlFactory = ({ IDL }) => {
     'currency' : IDL.Text,
     'price' : IDL.Float64,
   });
-  const VIPPackage = IDL.Record({
-    'id' : IDL.Nat,
-    'exclusivePerks' : IDL.Opt(IDL.Text),
-    'name' : IDL.Text,
-    'inclusions' : IDL.Vec(IDL.Text),
-    'currency' : IDL.Text,
-    'price' : IDL.Float64,
-  });
   const AmenityCategory = IDL.Variant({
     'transportation' : IDL.Null,
     'safetyAndSecurity' : IDL.Null,
@@ -422,10 +421,24 @@ export const idlFactory = ({ IDL }) => {
     'checkOutTime' : IDL.Opt(IDL.Text),
     'location' : IDL.Opt(GeoLocation),
   });
+  const BundleInput = IDL.Record({
+    'ticket' : Ticket,
+    'hotel' : Hotel,
+    'roomType' : RoomType,
+  });
+  const VIPPackage = IDL.Record({
+    'id' : IDL.Nat,
+    'exclusivePerks' : IDL.Opt(IDL.Text),
+    'name' : IDL.Text,
+    'inclusions' : IDL.Vec(IDL.Text),
+    'currency' : IDL.Text,
+    'price' : IDL.Float64,
+  });
   const TravelWindow = IDL.Record({ 'checkIn' : Time, 'checkOut' : Time });
   const ComparisonInput = IDL.Record({
     'ticketSources' : IDL.Vec(Ticket),
     'event' : IDL.Text,
+    'userChoice' : IDL.Opt(BundleInput),
     'vipPackageOptions' : IDL.Vec(VIPPackage),
     'hotels' : IDL.Vec(Hotel),
     'travelWindow' : TravelWindow,
@@ -439,9 +452,10 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'userId' : IDL.Principal,
     'createdAt' : Time,
-    'bundles' : IDL.Vec(Bundle),
+    'upgradeAlternatives' : IDL.Vec(Bundle),
     'ticketSources' : IDL.Vec(Ticket),
     'event' : IDL.Text,
+    'userChoice' : IDL.Opt(Bundle),
     'vipPackageOptions' : IDL.Vec(VIPPackage),
     'hotels' : IDL.Vec(Hotel),
     'travelWindow' : TravelWindow,
