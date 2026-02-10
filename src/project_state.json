@@ -1,0 +1,381 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 23,
+  "summary": "Build a concert-travel deal comparison app that compares total trip cost across many ticketing sources, VIP packages, and lodging/travel providers, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding.",
+  "architectural_notes": [
+    "Core value: optimize total trip cost (tickets + VIP + lodging) rather than ticket price alone.",
+    "Bundle generation requires integrating event ticket sources, VIP package availability, and hotel search/pricing.",
+    "Adding social + photo features introduces major privacy/safety/compliance needs (age gating, parental consent, biometrics/face recognition, moderation, and data retention controls).",
+    "Brand direction: quirky vintage travel aesthetic (old passport/ticket motif) with an optional fun tagline for teen-friendly appeal.",
+    "Scope intent: broaden supplier integrations beyond a single provider (multiple ticket + accommodation/travel sources + VIP packages), increasing aggregation/normalization needs.",
+    "Visual theme update request: switch primary palette to army green + navy blue + black.",
+    "Support configurable display names/labels for major app sections (e.g., Profile, Memory Finder, Groups) so the UI can be rebranded without changing underlying feature behavior.",
+    "Logo asset needs revision: old passport look while also clearly showing a perfectly preserved/readable airplane ticket element and a visible concert ticket element.",
+    "Ensure branding/logo components (including login page) use responsive sizing to fill their intended container (e.g., correct width/height/object-fit) rather than rendering too small."
+  ],
+  "known_issues": [
+    "AI was unable to complete the build request; user asked to retry ('Try doing it again').",
+    "Current logo does not clearly show a readable preserved airplane ticket and visible concert ticket within the old passport motif; user requested a fix.",
+    "Login page logo is rendered too small; user wants it sized to fit/fill the logo box.",
+    "Welcome/sign-in screen copy is not matching desired text; user wants it to read \"Welcome to EOA\" (currently includes garbled/extra characters like \"W\")."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-the-core-user-flow-to-compare-an-event-trip-s-total-cost-by-combining-concert-tickets-official-vip-packages-when-available-and-lodging-for-a-user-selected-travel-window-days-before-after-the-concert",
+      "title": "Create the core user flow to compare an event trip’s total cost by combining concert tickets, official VIP packages (when available), and lodging for a user-selected travel window (days before/after the concert).",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-event-and-pricing-input-model-that-supports-comparing-multiple-ticket-sources-multiple-vip-package-options-and-multiple-hotels-for-the-same-trip-including-currency-aware-totals",
+      "title": "Implement an event and pricing input model that supports comparing multiple ticket sources, multiple VIP package options, and multiple hotels for the same trip, including currency-aware totals.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-bundle-generation-logic-that-a-includes-official-vip-packages-when-the-user-indicates-one-exists-and-b-if-no-suitable-vip-package-exists-generates-an-alternative-vip-style-bundle-by-pairing-the-cheapest-viable-hotel-options-with-standard-ticket-offers-without-claiming-official-vip",
+      "title": "Add bundle generation logic that: (a) includes official VIP packages when the user indicates one exists and (b) if no suitable VIP package exists, generates an alternative “VIP-style” bundle by pairing the cheapest viable hotel options with standard ticket offers (without claiming official VIP).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-a-saved-comparisons-feature-tied-to-the-signed-in-internet-identity-user-so-travelers-can-save-revisit-and-delete-trip-comparisons-event-inputs-generated-bundle-results",
+      "title": "Provide a saved comparisons feature tied to the signed-in Internet Identity user so travelers can save, revisit, and delete trip comparisons (event + inputs + generated bundle results).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-and-implement-a-coherent-visual-theme-for-the-app-colors-typography-spacing-layout-that-fits-a-concert-travel-savings-product-and-apply-it-consistently-across-all-screens",
+      "title": "Design and implement a coherent visual theme for the app (colors, typography, spacing, layout) that fits a concert-travel savings product and apply it consistently across all screens.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-the-initial-set-of-screens-components-1-landing-home-with-product-explanation-2-trip-builder-form-3-results-bundle-comparison-view-4-saved-comparisons-view-and-basic-navigation-between-them",
+      "title": "Create the initial set of screens/components: (1) Landing/Home with product explanation, (2) Trip Builder form, (3) Results/Bundle Comparison view, (4) Saved Comparisons view, and basic navigation between them.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-static-generated-image-assets-to-support-branding-and-the-landing-page-and-render-them-from-frontend-public-assets-generated-not-via-the-backend",
+      "title": "Add static generated image assets to support branding and the landing page, and render them from frontend/public/assets/generated (not via the backend).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-under-18-safety-gate-for-any-action-that-implies-purchasing-tickets-or-packages-by-requiring-the-user-to-confirm-either-a-they-are-18-or-b-they-have-parent-guardian-permission-before-the-ui-shows-any-purchase-directed-call-to-action-cta-such-as-continue-to-buy-book-hotel-or-external-links-if-when-present-the-confirmation-must-be-explicit-checkbox-short-consent-text-and-stored-per-signed-in-user-so-it-persists-across-sessions",
+      "title": "Add an under-18 safety gate for any action that implies purchasing tickets or packages by requiring the user to confirm either (a) they are 18+ or (b) they have parent/guardian permission before the UI shows any purchase-directed call-to-action (CTA) such as “Continue to buy”, “Book hotel”, or external links (if/when present). The confirmation must be explicit (checkbox + short consent text) and stored per signed-in user so it persists across sessions.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-memory-finder-feature-that-lets-a-signed-in-user-create-photo-albums-and-upload-photos-tied-to-their-account-each-photo-must-support-manually-tagging-people-in-the-photo-by-linking-the-tag-to-a-known-user-profile-selected-from-the-user-s-friends-list-or-by-entering-a-principal-provide-pages-components-to-create-delete-albums-upload-delete-photos-and-view-an-album-with-its-tagged-people",
+      "title": "Create a “Memory Finder” feature that lets a signed-in user create photo albums and upload photos tied to their account. Each photo must support manually tagging people in the photo by linking the tag to a known user profile (selected from the user’s friends list or by entering a principal). Provide pages/components to: create/delete albums, upload/delete photos, and view an album with its tagged people.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-safe-alternative-to-automated-face-scanning-by-adding-a-tag-people-workflow-on-each-uploaded-photo-that-supports-a-manual-tagging-and-b-optionally-drawing-adjusting-simple-rectangular-face-boxes-for-each-tag-no-automatic-recognition-the-ui-should-explain-that-automated-face-recognition-is-not-performed",
+      "title": "Implement a safe alternative to automated face scanning by adding a “Tag people” workflow on each uploaded photo that supports (a) manual tagging and (b) optionally drawing/adjusting simple rectangular “face boxes” for each tag (no automatic recognition). The UI should explain that automated face recognition is not performed.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-groups-concert-travelers-feature-as-an-asynchronous-group-chat-system-no-real-time-sockets-where-signed-in-users-can-join-create-a-group-associated-with-a-trip-comparison-or-a-generic-group-and-post-messages-provide-a-simple-group-list-group-detail-view-with-message-history-and-the-ability-to-leave-a-group-use-polling-via-react-query-refetch-intervals-for-updates",
+      "title": "Add a “Groups” (concert travelers) feature as an asynchronous group chat system (no real-time sockets) where signed-in users can join/create a group associated with a trip comparison (or a generic group) and post messages. Provide a simple group list, group detail view with message history, and the ability to leave a group. Use polling via React Query refetch intervals for updates.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-app-navigation-to-include-entry-points-for-the-new-social-safety-features-e-g-memory-finder-and-groups-keeping-the-ui-teen-friendly-and-simple-ensure-navigation-remains-functional-across-desktop-and-mobile-breakpoints",
+      "title": "Update app navigation to include entry points for the new social/safety features (e.g., “Memory Finder” and “Groups”), keeping the UI teen-friendly and simple. Ensure navigation remains functional across desktop and mobile breakpoints.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-primary-brand-logo-image-in-a-quirky-vintage-style-an-old-passport-silhouette-that-visually-reads-like-a-concert-ticket-inside-pages-resemble-a-concert-ticket-with-worn-edges-faded-ink-and-stamped-used-texture-include-a-preserved-layered-airplane-ticket-element-where-seat-number-cabin-class-first-economy-and-airline-text-are-still-visible",
+      "title": "Create a new primary brand logo image in a quirky vintage style: an old passport silhouette that visually reads like a concert ticket (inside pages resemble a concert ticket), with worn edges, faded ink, and stamped/used texture; include a preserved, layered airplane ticket element where seat number, cabin class (first/economy), and airline text are still visible.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-centralized-branding-config-app-name-and-optional-tagline-and-use-it-consistently-across-the-ui-shell-topnav-brand-area-homepage-hero-footer-copyright-line-and-the-html-document-title",
+      "title": "Add a centralized branding config (app name and optional tagline) and use it consistently across the UI shell: TopNav brand area, HomePage hero, Footer copyright line, and the HTML document title.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-homepage-hero-logo-asset-reference-with-the-new-vintage-passport-ticket-logo-and-ensure-alt-text-and-sizing-remain-appropriate-for-accessibility-and-responsive-layouts",
+      "title": "Replace the current HomePage hero logo asset reference with the new vintage passport-ticket logo and ensure alt text and sizing remain appropriate for accessibility and responsive layouts.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-authenticated-profile-page-that-acts-as-a-personal-dashboard-and-surfaces-the-signed-in-user-s-saved-trip-plans-saved-comparisons-so-users-can-quickly-revisit-them-without-searching",
+      "title": "Create a new authenticated \"Profile\" page that acts as a personal dashboard and surfaces the signed-in user’s saved trip plans (saved comparisons) so users can quickly revisit them without searching.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-routing-and-navigation-entry-points-for-the-new-profile-page-and-adjust-the-post-login-experience-so-users-can-reach-their-saved-trip-plans-immediately-after-signing-in",
+      "title": "Add routing and navigation entry points for the new Profile page, and adjust the post-login experience so users can reach their saved trip plans immediately after signing in.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-profile-creation-flow-continues-to-work-with-the-new-profile-dashboard-by-guiding-first-time-signed-in-users-through-profile-setup-before-the-profile-dashboard-attempts-to-show-personalized-content",
+      "title": "Ensure the profile creation flow continues to work with the new Profile dashboard by guiding first-time signed-in users through profile setup before the Profile dashboard attempts to show personalized content.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-global-tailwind-theme-tokens-to-use-an-army-green-navy-blue-and-black-palette-by-adjusting-the-css-variables-in-frontend-src-index-css-e-g-background-card-primary-secondary-accent-muted-border-ring-and-related-sidebar-tokens-so-the-app-s-primary-actions-and-highlights-read-as-army-green-secondary-navigation-accents-read-as-navy-and-surfaces-backgrounds-stay-black-near-black",
+      "title": "Update the global Tailwind theme tokens to use an army green, navy blue, and black palette by adjusting the CSS variables in `frontend/src/index.css` (e.g., `--background`, `--card`, `--primary`, `--secondary`, `--accent`, `--muted`, `--border`, `--ring`, and related `--sidebar-*` tokens) so the app’s primary actions and highlights read as army green, secondary/navigation accents read as navy, and surfaces/backgrounds stay black/near-black.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-readability-and-accessibility-after-the-palette-change-by-ensuring-sufficient-contrast-for-common-text-styles-text-foreground-text-muted-foreground-and-interactive-states-hover-focus-ring-against-the-black-near-black-surfaces",
+      "title": "Verify readability and accessibility after the palette change by ensuring sufficient contrast for common text styles (`text-foreground`, `text-muted-foreground`) and interactive states (hover/focus ring) against the black/near-black surfaces.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-centralized-branding-configuration-to-reflect-the-new-app-name-and-tagline-if-desired-and-ensure-any-branding-text-that-currently-includes-the-old-name-is-updated-accordingly",
+      "title": "Update the centralized branding configuration to reflect the new app name (and tagline if desired), and ensure any branding text that currently includes the old name is updated accordingly.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-browser-document-title-reflects-the-renamed-app-consistently-including-when-navigating-between-routes",
+      "title": "Ensure the browser/document title reflects the renamed app consistently (including when navigating between routes).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-remaining-hard-coded-occurrences-of-the-old-app-name-in-the-ui-shell-and-pages-with-the-centralized-branding-value-and-update-any-derived-identifiers-that-still-reference-the-old-name",
+      "title": "Replace remaining hard-coded occurrences of the old app name in the UI shell and pages with the centralized branding value, and update any derived identifiers that still reference the old name.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rename-the-app-s-user-facing-page-feature-labels-across-the-ui-navigation-page-headings-buttons-and-helper-text-using-the-previously-suggested-unique-names-without-changing-routes-or-functionality-apply-these-exact-label-mappings-app-name-branding-triptally-trip-builder-page-label-routerally-saved-trips-saved-comparisons-label-costcompass-memory-finder-label-echopass-groups-label-novatrips-profile-label-vibevoyager",
+      "title": "Rename the app’s user-facing page/feature labels across the UI (navigation, page headings, buttons, and helper text) using the previously suggested unique names, without changing routes or functionality. Apply these exact label mappings:\n- App name (branding): \"TripTally\"\n- Trip Builder page label: \"RouteRally\"\n- Saved Trips / Saved Comparisons label: \"CostCompass\"\n- Memory Finder label: \"EchoPass\"\n- Groups label: \"NovaTrips\"\n- Profile label: \"VibeVoyager\"",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-an-updated-primary-logo-image-that-still-reads-as-an-old-passport-but-clearly-contains-1-a-perfectly-preserved-layered-airplane-ticket-with-legible-details-and-2-a-visibly-distinct-concert-ticket-element-within-the-composition-worn-passport-texture-readable-ticket-elements",
+      "title": "Generate an updated primary logo image that still reads as an old passport, but clearly contains (1) a perfectly preserved, layered airplane ticket with legible details and (2) a visibly distinct concert ticket element within the composition (worn passport texture + readable ticket elements).",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-centralized-branding-configuration-to-reference-the-updated-logo-asset-path-and-adjust-the-logo-alt-text-only-if-needed-to-remain-accurate-so-the-new-logo-appears-anywhere-branding-logo-primary-is-used-e-g-topnav-and-home-page-hero",
+      "title": "Update the centralized branding configuration to reference the updated logo asset path (and adjust the logo alt text only if needed to remain accurate), so the new logo appears anywhere `branding.logo.primary` is used (e.g., TopNav and Home page hero).",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-unauthenticated-sign-in-states-of-the-app-pages-so-the-brand-logo-is-displayed-at-a-larger-size-that-fills-fits-its-visual-container-box-not-rendered-as-a-small-icon-apply-this-to-the-sign-in-views-for-profile-profile-saved-comparisons-saved-memory-finder-memory-finder-and-groups-groups-using-the-existing-branding-logo-from-frontend-src-config-branding-ts",
+      "title": "Update the unauthenticated (\"Sign In\") states of the app pages so the brand logo is displayed at a larger size that fills/fits its visual container box (not rendered as a small icon). Apply this to the sign-in views for Profile (/profile), Saved Comparisons (/saved), Memory Finder (/memory-finder), and Groups (/groups), using the existing branding logo from `frontend/src/config/branding.ts`.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-identify-and-fix-the-user-facing-text-shown-during-the-sign-up-first-time-onboarding-flow-so-it-no-longer-displays-the-garbled-copy-w-and-welcome-to-the-eoa-and-instead-shows-clear-english-welcome-copy-consistent-with-the-current-branding-e-g-welcome-to-triptally",
+      "title": "Identify and fix the user-facing text shown during the sign-up / first-time onboarding flow so it no longer displays the garbled copy \"W\" and \"Welcome To The EOA\", and instead shows clear English welcome copy consistent with the current branding (e.g., \"Welcome to TripTally\").",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-unauthenticated-sign-in-welcome-screen-ui-so-that-it-displays-the-exact-heading-text-welcome-to-eoa-with-this-casing-on-pages-that-prompt-the-user-to-sign-in-and-ensure-no-extra-garbled-characters-appear-in-the-welcome-copy",
+      "title": "Update the unauthenticated sign-in / welcome screen UI so that it displays the exact heading text \"Welcome to EOA\" (with this casing) on pages that prompt the user to sign in, and ensure no extra/garbled characters appear in the welcome copy.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Compare concert ticket prices across sources for selected events",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Generate bulk/bundled deals combining tickets + hotel (and optionally VIP) for a trip",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Detect and include official VIP packages (e.g., early entry) when available",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "If no suitable VIP package exists, recommend hotels and assemble an alternative VIP-style bundle focused on lowest total cost",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Support trip-length flexibility (days before/after concert) and compare total cost for different date ranges",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Teen-friendly UX and onboarding (simple, fun, easy to use for teenagers)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Under-18 parental permission / consent gating before purchasing tickets or packages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Face scanning in uploaded photos to identify/tag people and link to profiles (to add friends and reduce meeting strangers)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Social layer: user profiles/friends and group chats with concert travelers worldwide (including travel/overseas coordination tied to saved packages/hotels)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Extend the backend user profile model and APIs to support: (1) storing parental-permission/age-confirmation status, and (2) a basic friends list that allows a user to add/remove other users by principal (and optionally store a display label). Update frontend queries/mutations to read/write this data using React Query.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Create a quirky vintage logo/brand concept (old passport shaped like a ticket, with preserved airplane ticket details) plus optional fun tagline",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Expand comparison coverage beyond Ticketmaster to aggregate tickets across many ticket websites plus accommodations/travel websites and band VIP packages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add user profiles that surface saved trip plans/bookings so on login users can quickly revisit without searching",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Update app color scheme/theme to use an army green, navy blue, and black palette",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Ensure the updated palette is applied consistently across key screens and navigation (Home, Trip Builder, Results, Saved Trips, Memory Finder, Groups, Profile) without introducing hard-coded colors that conflict with the theme tokens.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Change/rename the app name (update centralized branding config and UI references)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Rename in-app feature/page labels (e.g., Profile, Memory Finder, Groups, Saved Comparisons) to new unique names and reflect them consistently across navigation and relevant UI text",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Adjust login page logo sizing so the logo fills/fits its container box (not rendered too small)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Update the sign-in / welcome page copy to say \"Welcome to EOA\" (and remove any unwanted extra/garbled characters)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Concert travel deal comparison app (tickets + VIP + hotel bundles)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

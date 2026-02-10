@@ -1,0 +1,23 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update unauthenticated sign-in welcome heading to “Welcome to EOA”",
+  "requirements": [
+    {
+      "id": "REQ-31",
+      "summary": "Ensure unauthenticated sign-in prompt screens display the exact heading “Welcome to EOA” with no extra characters, without changing authentication behavior.",
+      "acceptanceCriteria": [
+        "When the user is signed out and lands on a page that renders the unauthenticated sign-in prompt, the screen shows the text \"Welcome to EOA\" clearly and exactly (no leading/trailing characters like \"W\").",
+        "The welcome text is user-facing English and is readable at common desktop and mobile widths.",
+        "No changes are made to authentication behavior (login/logout) other than updating the displayed welcome copy."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/UnauthSignInScreen.tsx",
+          "operation": "modify",
+          "description": "Update the unauthenticated sign-in / welcome screen UI to render a literal, exact h1 heading string \"Welcome to EOA\" (with this casing) on the sign-in prompt screen, ensuring no leading/trailing or garbled characters are introduced. Keep existing layout responsiveness and do not alter any login/logout logic (only the displayed welcome copy)."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { branding } from '@/config/branding';
+
+interface UnauthSignInScreenProps {
+  title: string;
+  description: string;
+  signInMessage: string;
+}
+
+export default function UnauthSignInScreen({
+  title,
+  description,
+  signInMessage,
+}: UnauthSignInScreenProps) {
+  const { login } = useInternetIdentity();
+
+  return (
+    <div className="container mx-auto px-4 py-16 max-w-2xl">
+      <div className="text-center mb-8">
+        <div className="flex justify-center mb-6">
+          <div className="w-64 h-64 flex items-center justify-center">
+            <img
+              src={branding.logo.primary}
+              alt={branding.logo.alt}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">Welcome to EOA</h1>
+        <p className="text-muted-foreground text-lg mb-8">{description}</p>
+      </div>
+      <Card className="border-2">
+        <CardContent className="pt-12 pb-12 text-center">
+          <p className="text-lg mb-6">{signInMessage}</p>
+          <Button size="lg" onClick={login}>
+            Sign In
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

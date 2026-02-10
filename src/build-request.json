@@ -1,0 +1,47 @@
+{
+  "kind": "build_request",
+  "title": "Update sign-in welcome copy to “Welcome to EOA”",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-31",
+      "text": "Update the unauthenticated sign-in / welcome screen UI so that it displays the exact heading text \"Welcome to EOA\" (with this casing) on pages that prompt the user to sign in, and ensure no extra/garbled characters appear in the welcome copy.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "I want the welcome page where you well where you sign in to say welcome to eoa"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When the user is signed out and lands on a page that renders the unauthenticated sign-in prompt, the screen shows the text \"Welcome to EOA\" clearly and exactly (no leading/trailing characters like \"W\").",
+        "The welcome text is user-facing English and is readable at common desktop and mobile widths.",
+        "No changes are made to authentication behavior (login/logout) other than updating the displayed welcome copy."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui (Shadcn UI components are read-only in this project).",
+    "Do not edit any files listed as immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx)."
+  ],
+  "nonGoals": [
+    "Do not rename the app brand (branding.appName) or change routing/navigation as part of this request.",
+    "Do not change the Profile setup dialog welcome text unless it is part of the sign-in welcome screen the user referred to."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}
