@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Update the unauthenticated sign-in / welcome screen heading to display the exact text “Welcome to EOA”.
+**Goal:** Make the sign-in (login) screen the default first page and display “Welcome to EOA”.
 
 **Planned changes:**
-- Locate the unauthenticated sign-in / welcome screen UI and replace the heading/welcome copy with the exact casing: “Welcome to EOA”.
-- Ensure the rendered welcome text contains no extra or garbled characters (e.g., no leading/trailing “W”).
-- Confirm the updated heading remains readable on common desktop and mobile widths without changing authentication behavior.
+- Update the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.
+- Ensure the sign-in page at `/` shows the exact heading text “Welcome to EOA”.
+- Provide a working “Sign In” button on `/` that initiates Internet Identity login and redirects to `/profile` on success.
+- Keep all other existing routes unchanged and reachable via navigation or direct URL.
 
-**User-visible outcome:** When signed out and prompted to sign in, users will see a clear, correctly-cased heading that reads “Welcome to EOA”.
+**User-visible outcome:** Visiting `/` shows a sign-in page with the heading “Welcome to EOA”; clicking “Sign In” logs the user in via Internet Identity and then takes them to `/profile`, while other pages remain accessible at their existing URLs.

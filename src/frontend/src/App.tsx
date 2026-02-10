@@ -1,6 +1,7 @@
 import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
+import SignInPage from './pages/SignInPage';
 import HomePage from './pages/HomePage';
 import TripBuilderPage from './pages/TripBuilderPage';
 import ResultsPage from './pages/ResultsPage';
@@ -23,6 +24,12 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  component: SignInPage,
+});
+
+const homeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/home',
   component: HomePage,
 });
 
@@ -76,6 +83,7 @@ const profileRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  homeRoute,
   tripBuilderRoute,
   resultsRoute,
   savedComparisonsRoute,

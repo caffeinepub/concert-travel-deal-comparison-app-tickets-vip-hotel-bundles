@@ -1,34 +1,53 @@
 {
   "kind": "build_request",
-  "title": "Update sign-in welcome copy to “Welcome to EOA”",
+  "title": "Make the sign-in (login) screen the default first page and show “Welcome to EOA”",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-31",
-      "text": "Update the unauthenticated sign-in / welcome screen UI so that it displays the exact heading text \"Welcome to EOA\" (with this casing) on pages that prompt the user to sign in, and ensure no extra/garbled characters appear in the welcome copy.",
+      "id": "REQ-32",
+      "text": "Make the login/sign-in screen the first (default) screen users see by changing the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "I want the welcome page where you well where you sign in to say welcome to eoa"
+          "I want the login page where you log in to be first and it says welcome to eoa"
         ]
       },
       "acceptanceCriteria": [
-        "When the user is signed out and lands on a page that renders the unauthenticated sign-in prompt, the screen shows the text \"Welcome to EOA\" clearly and exactly (no leading/trailing characters like \"W\").",
-        "The welcome text is user-facing English and is readable at common desktop and mobile widths.",
-        "No changes are made to authentication behavior (login/logout) other than updating the displayed welcome copy."
+        "When a user visits `/`, the app shows a sign-in page (not the current Home/Landing page).",
+        "All other existing routes (e.g., `/trip-builder`, `/saved`, `/memory-finder`, `/groups`, `/profile`) remain unchanged and reachable via navigation or direct URL."
+      ]
+    },
+    {
+      "id": "REQ-33",
+      "text": "Ensure the default sign-in page shown at `/` displays the exact heading text \"Welcome to EOA\" (English text, exact casing) and includes a working Sign In button that initiates Internet Identity login; after a successful login, redirect the user to `/profile`.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "I want the login page where you log in to be first and it says welcome to eoa"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The sign-in page at `/` visibly displays the heading text exactly: \"Welcome to EOA\".",
+        "No extra or garbled characters appear in the welcome heading text.",
+        "Clicking \"Sign In\" on the `/` page initiates Internet Identity login.",
+        "After a successful login from the `/` page, the user is navigated to `/profile`."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (Shadcn UI components are read-only in this project).",
-    "Do not edit any files listed as immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx)."
+    "Do not edit files under `frontend/src/components/ui` (read-only UI component sources).",
+    "Do not edit `frontend/src/hooks/useInternetIdentity.ts` / `.tsx`, `frontend/src/hooks/useActor.ts`, or `frontend/src/main.tsx` (immutable paths)."
   ],
   "nonGoals": [
-    "Do not rename the app brand (branding.appName) or change routing/navigation as part of this request.",
-    "Do not change the Profile setup dialog welcome text unless it is part of the sign-in welcome screen the user referred to."
+    "Do not change backend canister logic or data models.",
+    "Do not change existing route paths/URLs besides making `/` show the sign-in page.",
+    "Do not redesign unrelated pages (Trip Builder, Results, Saved, Memory Finder, Groups, Profile) beyond what is necessary to support the new default landing behavior."
   ],
   "imageRequirements": {
     "required": [],

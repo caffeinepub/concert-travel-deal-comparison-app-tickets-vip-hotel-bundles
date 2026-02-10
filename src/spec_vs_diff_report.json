@@ -1,14 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T20:38:25.840Z",
-  "summary": "REQ-31 appears implemented by updating the unauthenticated sign-in screen heading to the exact text \"Welcome to EOA\" in UnauthSignInScreen.tsx. No other functional/authentication changes are evident from the provided diff summary.",
-  "missing_requirements": [],
+  "generatedAt": "2026-02-10T20:43:59.257Z",
+  "summary": "Implemented a new SignInPage and set the `/` route to render it. The page passes the exact heading text \"Welcome to EOA\" and redirects authenticated users to `/profile`. However, the diff does not provide evidence that the `/` page includes a working \"Sign In\" button that initiates Internet Identity login (it delegates UI/behavior to UnauthSignInScreen, whose implementation is not shown).",
+  "missing_requirements": [
+    {
+      "id": "REQ-33",
+      "requirement": "Clicking \"Sign In\" on the `/` page initiates Internet Identity login.",
+      "reason": "The new `/` page renders `UnauthSignInScreen` and does not itself implement or show any sign-in button wiring/callback; without the `UnauthSignInScreen` implementation in the diff summary, there is no direct evidence the button exists and triggers Internet Identity login.",
+      "evidence": [
+        "frontend/src/pages/SignInPage.tsx"
+      ]
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.78,
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/auth/UnauthSignInScreen.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/pages/SignInPage.tsx",
     "project_state.json"
   ]
 }

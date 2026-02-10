@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-unauthenticated-sign-in-welcome-screen-ui-so-that-it-displays-the-exact-heading-text-welcome-to-eoa-with-this-casing-on-pages-that-prompt-the-user-to-sign-in-and-ensure-no-extra-garbled-characters-appear-in-the-welcome-copy",
-      "featureTitle": "Update the unauthenticated sign-in / welcome screen UI so that it displays the exact heading text \"Welcome to EOA\" (with this casing) on pages that prompt the user to sign in, and ensure no extra/garbled characters appear in the welcome copy.",
+      "featureId": "feature-make-the-login-sign-in-screen-the-first-default-screen-users-see-by-changing-the-index-route-to-render-a-dedicated-sign-in-page-instead-of-the-current-home-landing-page",
+      "featureTitle": "Make the login/sign-in screen the first (default) screen users see by changing the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.",
       "files": [
-        "frontend/src/components/auth/UnauthSignInScreen.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/pages/SignInPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +18,27 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-31"
+        "REQ-32"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-default-sign-in-page-shown-at-displays-the-exact-heading-text-welcome-to-eoa-english-text-exact-casing-and-includes-a-working-sign-in-button-that-initiates-internet-identity-login-after-a-successful-login-redirect-the-user-to-profile",
+      "featureTitle": "Ensure the default sign-in page shown at `/` displays the exact heading text \"Welcome to EOA\" (English text, exact casing) and includes a working Sign In button that initiates Internet Identity login; after a successful login, redirect the user to `/profile`.",
+      "files": [
+        "frontend/src/pages/SignInPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-33"
       ],
       "confidence": "high"
     }

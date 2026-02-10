@@ -1,5 +1,5 @@
 {
-  "frontend/src/App.tsx": "Main app component with TanStack Router setup including routes for home, trip builder, results, saved comparisons, memory finder (albums), groups (chat), and profile with theme provider.",
+  "frontend/src/App.tsx": "Main app component with TanStack Router setup including routes for sign-in (default `/`), home, trip builder, results, saved comparisons, memory finder (albums), groups (chat), and profile with theme provider.",
   "frontend/src/pages/HomePage.tsx": "Landing page with hero section featuring the vintage passport logo, app tagline display, explaining the app's value proposition with CTAs renamed to \"Start with RouteRally\" and \"View CostCompass\".",
   "frontend/src/pages/TripBuilderPage.tsx": "Trip builder form page renamed to \"RouteRally\" where users input event details, travel dates, and add ticket/VIP/hotel options before generating bundle comparisons.",
   "frontend/src/pages/ResultsPage.tsx": "Results page displaying generated bundles sorted by price or hotel rating, with save functionality for authenticated users; uses proper type casting for router state.",
@@ -33,5 +33,6 @@
   "frontend/src/main.tsx": "Application entry point that sets the document title from centralized branding config and wraps the app with QueryClient and InternetIdentity providers.",
   "frontend/index.html": "HTML entry point with updated document title \"TripTally - Smart Concert Travel Savings\" reflecting the new app name.",
   "frontend/src/pages/ProfilePage.tsx": "Authenticated profile dashboard page renamed to \"VibeVoyager\" displaying user's name and saved trip comparisons with view and delete actions, now using UnauthSignInScreen component with large logo for signed-out state.",
-  "frontend/src/components/auth/UnauthSignInScreen.tsx": "Reusable unauthenticated sign-in screen component displaying the branding logo at 256x256px with \"Welcome to EOA\" as the fixed heading, along with customizable description and sign-in button within a card."
+  "frontend/src/components/auth/UnauthSignInScreen.tsx": "Reusable unauthenticated sign-in screen component displaying the branding logo at 256x256px with \"Welcome to EOA\" as the fixed heading, along with customizable description and sign-in button within a card.",
+  "frontend/src/pages/SignInPage.tsx": "Dedicated sign-in page component for the `/` route that displays the UnauthSignInScreen with \"Welcome to EOA\" heading and redirects authenticated users to `/profile`."
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 23,
+  "projectStateVersion": 25,
   "summary": "Build a concert-travel deal comparison app that compares total trip cost across many ticketing sources, VIP packages, and lodging/travel providers, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding.",
   "architectural_notes": [
     "Core value: optimize total trip cost (tickets + VIP + lodging) rather than ticket price alone.",
@@ -11,7 +11,8 @@
     "Visual theme update request: switch primary palette to army green + navy blue + black.",
     "Support configurable display names/labels for major app sections (e.g., Profile, Memory Finder, Groups) so the UI can be rebranded without changing underlying feature behavior.",
     "Logo asset needs revision: old passport look while also clearly showing a perfectly preserved/readable airplane ticket element and a visible concert ticket element.",
-    "Ensure branding/logo components (including login page) use responsive sizing to fill their intended container (e.g., correct width/height/object-fit) rather than rendering too small."
+    "Ensure branding/logo components (including login page) use responsive sizing to fill their intended container (e.g., correct width/height/object-fit) rather than rendering too small.",
+    "Change initial routing/landing behavior so the unauthenticated login/sign-in page is the default first screen."
   ],
   "known_issues": [
     "AI was unable to complete the build request; user asked to retry ('Try doing it again').",
@@ -252,6 +253,22 @@
         "REQ-31"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-make-the-login-sign-in-screen-the-first-default-screen-users-see-by-changing-the-index-route-to-render-a-dedicated-sign-in-page-instead-of-the-current-home-landing-page",
+      "title": "Make the login/sign-in screen the first (default) screen users see by changing the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-default-sign-in-page-shown-at-displays-the-exact-heading-text-welcome-to-eoa-english-text-exact-casing-and-includes-a-working-sign-in-button-that-initiates-internet-identity-login-after-a-successful-login-redirect-the-user-to-profile",
+      "title": "Ensure the default sign-in page shown at `/` displays the exact heading text \"Welcome to EOA\" (English text, exact casing) and includes a working Sign In button that initiates Internet Identity login; after a successful login, redirect the user to `/profile`.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -370,6 +387,12 @@
     {
       "id": "AR-22",
       "summary": "Update the sign-in / welcome page copy to say \"Welcome to EOA\" (and remove any unwanted extra/garbled characters)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Make the login/sign-in page the first (default) screen users see, and ensure it displays the heading text \"Welcome to EOA\"",
       "reqIds": [],
       "status": "pending"
     }

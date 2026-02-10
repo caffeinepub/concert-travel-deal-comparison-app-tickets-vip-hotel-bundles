@@ -1,21 +1,42 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update unauthenticated sign-in welcome heading to “Welcome to EOA”",
+  "title": "Default `/` route to Sign-In screen with “Welcome to EOA” and post-login redirect",
   "requirements": [
     {
-      "id": "REQ-31",
-      "summary": "Ensure unauthenticated sign-in prompt screens display the exact heading “Welcome to EOA” with no extra characters, without changing authentication behavior.",
+      "id": "REQ-32",
+      "summary": "Change the `/` (index) route to render a dedicated sign-in page instead of the current Home/Landing page while keeping all other routes unchanged.",
       "acceptanceCriteria": [
-        "When the user is signed out and lands on a page that renders the unauthenticated sign-in prompt, the screen shows the text \"Welcome to EOA\" clearly and exactly (no leading/trailing characters like \"W\").",
-        "The welcome text is user-facing English and is readable at common desktop and mobile widths.",
-        "No changes are made to authentication behavior (login/logout) other than updating the displayed welcome copy."
+        "When a user visits `/`, the app shows a sign-in page (not the current Home/Landing page).",
+        "All other existing routes (e.g., `/trip-builder`, `/saved`, `/memory-finder`, `/groups`, `/profile`) remain unchanged and reachable via navigation or direct URL."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/auth/UnauthSignInScreen.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update the unauthenticated sign-in / welcome screen UI to render a literal, exact h1 heading string \"Welcome to EOA\" (with this casing) on the sign-in prompt screen, ensuring no leading/trailing or garbled characters are introduced. Keep existing layout responsiveness and do not alter any login/logout logic (only the displayed welcome copy)."
+          "description": "Update the TanStack Router index route (`/`) to render the new dedicated SignInPage component instead of HomePage, without changing any other route paths."
+        },
+        {
+          "path": "frontend/src/pages/SignInPage.tsx",
+          "operation": "create",
+          "description": "Create a dedicated sign-in page component for `/` that displays the unauthenticated sign-in UI (reuse the existing UnauthSignInScreen component) and serves as the new default first screen."
+        }
+      ]
+    },
+    {
+      "id": "REQ-33",
+      "summary": "Ensure the `/` sign-in page shows the exact heading \"Welcome to EOA\", starts Internet Identity login via a Sign In button, and redirects to `/profile` after successful login.",
+      "acceptanceCriteria": [
+        "The sign-in page at `/` visibly displays the heading text exactly: \"Welcome to EOA\".",
+        "No extra or garbled characters appear in the welcome heading text.",
+        "Clicking \"Sign In\" on the `/` page initiates Internet Identity login.",
+        "After a successful login from the `/` page, the user is navigated to `/profile`."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SignInPage.tsx",
+          "operation": "modify",
+          "description": "Implement sign-in behavior using the existing Internet Identity hook (per the selected \"authorization\" component guidance). Render UnauthSignInScreen (which already includes the exact \"Welcome to EOA\" heading and a Sign In button that calls `login`), and add a redirect to `/profile` when authentication becomes available. Verify the component's usage instructions before implementing."
         }
       ]
     }
