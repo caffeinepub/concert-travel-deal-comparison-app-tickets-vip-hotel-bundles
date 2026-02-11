@@ -1,14 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Let users compare total trip costs across multiple transport modes and automatically flag + save “better-value upgrades” (higher quality but cheaper) alongside the user’s planned baseline choices.
+**Goal:** Show a unique world-landscape background image behind the content on each main route, applied consistently via the shared AppLayout, while keeping the UI readable with a dark overlay.
 
 **Planned changes:**
-- Extend saved TripComparison data to persist the user’s planned (baseline) selections (ticket, optional VIP, hotel+room, and transport if provided) and also persist auto-flagged better-value upgrade alternatives (tickets, transport options, hotel rooms), while remaining compatible with previously saved comparisons.
-- Update the Trip Builder flow to allow adding/editing/removing transportation offers (at minimum plane, train, and taxi/ground), including mode, provider/name, class/comfort label, price, and currency.
-- Update comparison/results logic to include transport cost in total bundle cost when provided and identify the cheapest transport option (with currency matching).
-- Implement deterministic local upgrade detection (from user-entered offers only) that flags alternatives as “better-value upgrades” when they are cheaper than the user’s planned choice and higher quality based on entered labels/star rating/room label.
-- Update Save Comparison and saved-comparisons (CostCompass) UI to store and display the baseline planned choices plus a summary/count (or short list) of auto-saved flagged upgrades by category, and ensure delete removes all associated metadata.
-- Ensure all new/modified user-facing copy for transport, planned choice, and upgrades is clear English.
+- Add a per-route background mapping in the shared layout so each main page uses a distinct landscape image: /, /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile.
+- Ensure nested routes reuse the appropriate parent background (e.g., /memory-finder/$albumId uses the Memory Finder background; /groups/$groupId uses the Groups background).
+- Render backgrounds behind TopNav/page content/Footer with full-height coverage and responsive cover/center behavior.
+- Add a consistent dark overlay/tint so text, cards, and surfaces remain readable on top of the landscape images.
+- Add the new background images as static assets in frontend/public/assets/generated and reference them via absolute paths (/assets/generated/<filename>).
 
-**User-visible outcome:** Users can enter and compare multiple transport modes as part of a trip, select their planned baseline options, see cheaper higher-quality upgrades flagged in results, and save comparisons that include both their baseline choices and the auto-saved flagged upgrades for later viewing.
+**User-visible outcome:** Each main page displays its own scenic world landscape background behind the existing UI, with consistent readability and smooth navigation between routes.

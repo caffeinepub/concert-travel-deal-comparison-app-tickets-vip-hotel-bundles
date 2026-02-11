@@ -19,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { User, Calendar, Trash2, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import UnauthSignInScreen from '@/components/auth/UnauthSignInScreen';
+import LegalNameSection from '@/components/profile/LegalNameSection';
 
 export default function ProfilePage() {
   const { identity } = useInternetIdentity();
@@ -68,6 +69,8 @@ export default function ProfilePage() {
     );
   }
 
+  const displayName = profile?.publicScreenName || 'User';
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="mb-8">
@@ -89,8 +92,8 @@ export default function ProfilePage() {
           <CardContent>
             <div className="space-y-2">
               <div>
-                <p className="text-sm text-muted-foreground">Name</p>
-                <p className="text-lg font-medium">{profile?.name || 'Not set'}</p>
+                <p className="text-sm text-muted-foreground">Screen Name</p>
+                <p className="text-lg font-medium">{displayName}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Principal ID</p>
@@ -99,6 +102,9 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Legal Name Section */}
+        <LegalNameSection />
 
         {/* Saved Comparisons */}
         <Card>

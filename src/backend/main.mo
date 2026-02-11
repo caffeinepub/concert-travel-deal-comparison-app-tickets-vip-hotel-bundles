@@ -1,6 +1,5 @@
 import Map "mo:core/Map";
 import Array "mo:core/Array";
-import Iter "mo:core/Iter";
 import Time "mo:core/Time";
 import List "mo:core/List";
 import Runtime "mo:core/Runtime";
@@ -12,9 +11,10 @@ import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import Storage "blob-storage/Storage";
-import Migration "migration";
+import Iter "mo:core/Iter";
 
-(with migration = Migration.run)
+
+
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -176,32 +176,92 @@ actor {
   };
 
   public type UserProfile = {
-    name : Text;
+    publicScreenName : Text;
     parentPermissionConfirmed : Bool;
     friends : [FriendEntry];
   };
 
-  let userProfiles = Map.empty<Principal, UserProfile>();
+  type LegalInfo = {
+    legalName : Text;
+  };
+
+  type UserState = {
+    profile : UserProfile;
+    legalInfo : LegalInfo;
+  };
+
+  let userProfiles = Map.empty<Principal, UserState>();
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
     };
-    userProfiles.get(caller);
+    switch (userProfiles.get(caller)) {
+      case (null) { null };
+      case (?userState) { ?userState.profile };
+    };
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view profiles");
+    };
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
-    userProfiles.get(user);
+    switch (userProfiles.get(user)) {
+      case (null) { null };
+      case (?userState) { ?userState.profile };
+    };
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
-    userProfiles.add(caller, profile);
+
+    let currentLegalInfo = switch (userProfiles.get(caller)) {
+      case (null) { { legalName = "" } };
+      case (?userState) { userState.legalInfo };
+    };
+
+    let newUserState = {
+      profile;
+      legalInfo = currentLegalInfo;
+    };
+    userProfiles.add(caller, newUserState);
+  };
+
+  public shared ({ caller }) func saveLegalInfo(legalInfo : LegalInfo) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can save legal info");
+    };
+
+    let currentProfile = switch (userProfiles.get(caller)) {
+      case (null) {
+        {
+          publicScreenName = "";
+          parentPermissionConfirmed = false;
+          friends = [];
+        };
+      };
+      case (?userState) { userState.profile };
+    };
+    let newUserState = {
+      profile = currentProfile;
+      legalInfo;
+    };
+    userProfiles.add(caller, newUserState);
+  };
+
+  public query ({ caller }) func getLegalInfo() : async ?LegalInfo {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can access legal info");
+    };
+    switch (userProfiles.get(caller)) {
+      case (null) { null };
+      case (?userState) { ?userState.legalInfo };
+    };
   };
 
   public shared ({ caller }) func addFriendRequest(friendEntry : FriendEntry) : async () {
@@ -211,11 +271,17 @@ actor {
 
     let currentProfile = switch (userProfiles.get(caller)) {
       case (null) { Runtime.trap("Profile not found") };
-      case (?profile) { profile };
+      case (?userState) { userState.profile };
     };
 
     let updatedProfile = { currentProfile with friends = [friendEntry].concat(currentProfile.friends) };
-    userProfiles.add(caller, updatedProfile);
+    switch (userProfiles.get(caller)) {
+      case (null) { Runtime.trap("Illegal attempt to add friends to non-existing profile") };
+      case (?userState) {
+        let updatedState = { userState with profile = updatedProfile };
+        userProfiles.add(caller, updatedState);
+      };
+    };
   };
 
   public shared ({ caller }) func removeFriend(friendId : Nat) : async () {
@@ -225,12 +291,18 @@ actor {
 
     let currentProfile = switch (userProfiles.get(caller)) {
       case (null) { Runtime.trap("Profile not found") };
-      case (?profile) { profile };
+      case (?userState) { userState.profile };
     };
 
     let filteredFriends = currentProfile.friends.filter(func(friend) { friend.id != friendId });
     let updatedProfile = { currentProfile with friends = filteredFriends };
-    userProfiles.add(caller, updatedProfile);
+    switch (userProfiles.get(caller)) {
+      case (null) { Runtime.trap("Illegal attempt to remove friends from non-existing profile") };
+      case (?userState) {
+        let updatedState = { userState with profile = updatedProfile };
+        userProfiles.add(caller, updatedState);
+      };
+    };
   };
 
   public shared ({ caller }) func setParentPermissionStatus(hasPermission : Bool) : async () {
@@ -240,11 +312,17 @@ actor {
 
     let currentProfile = switch (userProfiles.get(caller)) {
       case (null) { Runtime.trap("Profile not found") };
-      case (?profile) { profile };
+      case (?userState) { userState.profile };
     };
 
     let updatedProfile = { currentProfile with parentPermissionConfirmed = hasPermission };
-    userProfiles.add(caller, updatedProfile);
+    switch (userProfiles.get(caller)) {
+      case (null) { Runtime.trap("Illegal attempt to set parental permission on non-existing profile") };
+      case (?userState) {
+        let updatedState = { userState with profile = updatedProfile };
+        userProfiles.add(caller, updatedState);
+      };
+    };
   };
 
   module Hotel {
@@ -327,7 +405,7 @@ actor {
         let basePrice = choice.ticket.price + choice.roomType.price;
 
         // Try to find VIP ticket alternatives
-        for (ticket in ticketSources.vals()) {
+        for (ticket in ticketSources.values()) {
           if (ticket.type_ == #vip and ticket.price <= basePrice + 100.0) {
             upgrades.add({
               hotel = choice.hotel;
@@ -539,7 +617,7 @@ actor {
 
     let photoId = IdGenerator.generate(nextId);
     nextId := photoId;
-    
+
     let newPhoto = {
       id = photoId;
       description = photo.description;
@@ -735,7 +813,7 @@ actor {
 
     let messageId = IdGenerator.generate(nextId);
     nextId := messageId;
-    
+
     let newMessage = {
       id = messageId;
       author = message.author;
@@ -743,8 +821,8 @@ actor {
       timestamp = Time.now();
     };
 
-    let updatedGroup = { 
-      group with 
+    let updatedGroup = {
+      group with
       messages = [newMessage].concat(group.messages);
       lastUpdate = Time.now();
     };

@@ -1,116 +1,85 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T21:47:32.083Z",
+  "generatedAt": "2026-02-10T23:54:45.473Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 4,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-46",
-        "summary": "Extend the backend trip-comparison data model so a saved TripComparison can (a) store the user’s originally planned/saved choices and (b) store a set of auto-flagged “better-value upgrades” (e.g., better seats/first class/nicer room) that are cheaper than the user’s planned choice.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-47",
-        "summary": "Add transportation options to the trip-building flow so users can compare total trip cost across multiple transport modes (at minimum: plane, train, and taxi/ground transport) and carry these inputs through to results and saving.",
+        "id": "REQ-58",
+        "summary": "Add a per-route background system so each main page shows a different world landscape background image behind the page content (unique background per page the user clicks on). Apply this at the shared layout level (AppLayout) so it works consistently across routes.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/offers/TransportOffersEditor.tsx",
-          "frontend/src/pages/TripBuilderPage.tsx",
-          "frontend/src/lib/localComparisonEngine.ts",
-          "frontend/src/components/results/BundleCard.tsx",
-          "frontend/src/pages/ResultsPage.tsx"
+          "frontend/src/lib/routeBackgrounds.ts",
+          "frontend/src/components/layout/AppLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/offers/TransportOffersEditor.tsx",
-          "frontend/src/pages/TripBuilderPage.tsx",
-          "frontend/src/lib/localComparisonEngine.ts",
-          "frontend/src/components/results/BundleCard.tsx",
-          "frontend/src/pages/ResultsPage.tsx"
+          "frontend/src/lib/routeBackgrounds.ts",
+          "frontend/src/components/layout/AppLayout.tsx"
         ]
       },
       {
-        "id": "REQ-48",
-        "summary": "Implement better-value upgrade detection in the local comparison logic so the app can flag higher-quality options that are cheaper than the user’s planned choice (tickets: e.g., “front row”; transport: e.g., “first class”; hotels: e.g., higher star rating / nicer room type), using only the offers the user entered.",
+        "id": "REQ-59",
+        "summary": "Ensure foreground content remains readable on top of landscape backgrounds by adding a consistent dark overlay/tint (or equivalent) that preserves the existing dark theme look while still letting the landscape be visible.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/upgradeDetection.ts",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/components/results/BundleCard.tsx"
+          "frontend/index.css",
+          "frontend/src/components/layout/AppLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/upgradeDetection.ts",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/components/results/BundleCard.tsx"
+          "frontend/src/components/layout/AppLayout.tsx"
         ]
       },
       {
-        "id": "REQ-49",
-        "summary": "When saving a trip comparison, auto-save the flagged upgrade alternatives alongside the user’s originally planned choice, and surface both in the saved-comparisons (CostCompass) view.",
+        "id": "REQ-60",
+        "summary": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames (no backend image serving).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/pages/SavedComparisonsPage.tsx",
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/backend.idl.ts"
+          "frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png",
+          "frontend/src/lib/routeBackgrounds.ts"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/pages/SavedComparisonsPage.tsx",
-          "frontend/src/pages/ProfilePage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-50",
-        "summary": "Ensure any new or modified user-facing copy introduced for upgrade flagging and transportation comparison is clear English and does not introduce non-English or garbled text.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/offers/TransportOffersEditor.tsx",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/pages/SavedComparisonsPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/offers/TransportOffersEditor.tsx",
-          "frontend/src/pages/ResultsPage.tsx",
-          "frontend/src/pages/SavedComparisonsPage.tsx"
+          "frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png",
+          "frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png",
+          "frontend/src/lib/routeBackgrounds.ts"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/auth/ProfileSetupDialog.tsx",
-    "frontend/src/components/offers/TransportOffersEditor.tsx",
-    "frontend/src/components/results/BundleCard.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/lib/localComparisonEngine.ts",
-    "frontend/src/lib/upgradeDetection.ts",
-    "frontend/src/pages/AlbumPage.tsx",
-    "frontend/src/pages/GroupDetailPage.tsx",
-    "frontend/src/pages/GroupsPage.tsx",
-    "frontend/src/pages/MemoryFinderPage.tsx",
-    "frontend/src/pages/ProfilePage.tsx",
-    "frontend/src/pages/ResultsPage.tsx",
-    "frontend/src/pages/SavedComparisonsPage.tsx",
-    "frontend/src/pages/TripBuilderPage.tsx",
+    "frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png",
+    "frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/index.css",
+    "frontend/src/lib/routeBackgrounds.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

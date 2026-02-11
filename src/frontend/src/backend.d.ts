@@ -18,6 +18,9 @@ export interface GeoLocation {
     latitude: number;
     longitude: number;
 }
+export interface LegalInfo {
+    legalName: string;
+}
 export type Time = bigint;
 export interface Amenity {
     name: string;
@@ -169,7 +172,7 @@ export interface Ticket {
     price: number;
 }
 export interface UserProfile {
-    name: string;
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<FriendEntry>;
 }
@@ -219,11 +222,13 @@ export interface backendInterface {
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getGroup(groupId: bigint): Promise<Group | null>;
+    getLegalInfo(): Promise<LegalInfo | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     leaveGroup(groupId: bigint): Promise<void>;
     removeFriend(friendId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    saveLegalInfo(legalInfo: LegalInfo): Promise<void>;
     setParentPermissionStatus(hasPermission: boolean): Promise<void>;
     uploadPhotoToAlbum(albumId: bigint, photo: PhotoInput): Promise<void>;
 }

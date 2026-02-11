@@ -26,10 +26,12 @@ export default function GroupDetailPage() {
       return;
     }
 
+    const displayName = profile.publicScreenName || 'User';
+
     const author: GroupMember = {
       id: BigInt(Date.now()),
       principal: identity.getPrincipal(),
-      userName: profile.name,
+      userName: displayName,
       isConfirmed: true,
     };
 
@@ -68,71 +70,71 @@ export default function GroupDetailPage() {
 
   if (!group) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Group Not Found</h1>
-        <Button onClick={() => navigate({ to: '/groups' })}>
-          Back to Groups
-        </Button>
+      <div className="container mx-auto px-4 py-16">
+        <Card className="p-8 text-center">
+          <p className="text-muted-foreground mb-4">Group not found</p>
+          <Button onClick={() => navigate({ to: '/groups' })}>
+            Back to Groups
+          </Button>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate({ to: '/groups' })}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Groups
-        </Button>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate({ to: '/groups' })}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{group.groupName}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold">{group.groupName}</h1>
+            <p className="text-sm text-muted-foreground">
               {group.members.length} {group.members.length === 1 ? 'member' : 'members'}
             </p>
           </div>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <LogOut className="mr-2 h-4 w-4" />
-                Leave Group
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Leave Group?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to leave "{group.groupName}"? You won't be able to see messages or rejoin without an invitation.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLeaveGroup}>
-                  Leave Group
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <LogOut className="mr-2 h-4 w-4" />
+              Leave Group
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Leave Group?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to leave this group? You won't be able to see messages or rejoin without an invitation.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLeaveGroup}>
+                Leave Group
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
-      <Alert className="mb-6 border-amber-500/20 bg-amber-500/5">
-        <AlertDescription className="text-sm">
-          <strong>Stay Safe:</strong> Don't share personal information like addresses, phone numbers, or payment details. Keep conversations friendly and respectful.
+      <Alert className="mb-6">
+        <AlertDescription>
+          <strong>Safety Reminder:</strong> Never share personal information like your address, phone number, or financial details in group chats. 
+          Meet in public places and let someone know your plans.
         </AlertDescription>
       </Alert>
 
-      <Card>
-        <ChatPanel
-          messages={group.messages}
-          onSendMessage={handlePostMessage}
-          isSending={postMutation.isPending}
-        />
-      </Card>
+      <ChatPanel
+        messages={group.messages}
+        onSendMessage={handlePostMessage}
+        isSending={postMutation.isPending}
+      />
     </div>
   );
 }

@@ -93,6 +93,9 @@ export interface GeoLocation {
     latitude: number;
     longitude: number;
 }
+export interface LegalInfo {
+    legalName: string;
+}
 export type Time = bigint;
 export interface _CaffeineStorageRefillInformation {
     proposed_top_up_amount?: bigint;
@@ -251,7 +254,7 @@ export interface Ticket {
     price: number;
 }
 export interface UserProfile {
-    name: string;
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<FriendEntry>;
 }
@@ -312,15 +315,17 @@ export interface backendInterface {
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getGroup(groupId: bigint): Promise<Group | null>;
+    getLegalInfo(): Promise<LegalInfo | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     leaveGroup(groupId: bigint): Promise<void>;
     removeFriend(friendId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    saveLegalInfo(legalInfo: LegalInfo): Promise<void>;
     setParentPermissionStatus(hasPermission: boolean): Promise<void>;
     uploadPhotoToAlbum(albumId: bigint, photo: PhotoInput): Promise<void>;
 }
-import type { Album as _Album, Amenity as _Amenity, AmenityCategory as _AmenityCategory, Bundle as _Bundle, BundleInput as _BundleInput, ComparisonInput as _ComparisonInput, ExternalBlob as _ExternalBlob, FriendEntry as _FriendEntry, GeoLocation as _GeoLocation, Group as _Group, GroupMember as _GroupMember, Hotel as _Hotel, Message as _Message, NewMessage as _NewMessage, Photo as _Photo, PhotoInput as _PhotoInput, PhotoTag as _PhotoTag, PriceRange as _PriceRange, PriceType as _PriceType, RoomType as _RoomType, Ticket as _Ticket, TicketType as _TicketType, Time as _Time, TravelWindow as _TravelWindow, TripComparison as _TripComparison, UserProfile as _UserProfile, UserRole as _UserRole, VIPPackage as _VIPPackage, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { Album as _Album, Amenity as _Amenity, AmenityCategory as _AmenityCategory, Bundle as _Bundle, BundleInput as _BundleInput, ComparisonInput as _ComparisonInput, ExternalBlob as _ExternalBlob, FriendEntry as _FriendEntry, GeoLocation as _GeoLocation, Group as _Group, GroupMember as _GroupMember, Hotel as _Hotel, LegalInfo as _LegalInfo, Message as _Message, NewMessage as _NewMessage, Photo as _Photo, PhotoInput as _PhotoInput, PhotoTag as _PhotoTag, PriceRange as _PriceRange, PriceType as _PriceType, RoomType as _RoomType, Ticket as _Ticket, TicketType as _TicketType, Time as _Time, TravelWindow as _TravelWindow, TripComparison as _TripComparison, UserProfile as _UserProfile, UserRole as _UserRole, VIPPackage as _VIPPackage, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -645,6 +650,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getLegalInfo(): Promise<LegalInfo | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLegalInfo();
+                return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLegalInfo();
+            return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
@@ -704,14 +723,28 @@ export class Backend implements backendInterface {
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n101(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n102(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n101(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n102(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async saveLegalInfo(arg0: LegalInfo): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveLegalInfo(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveLegalInfo(arg0);
             return result;
         }
     }
@@ -732,14 +765,14 @@ export class Backend implements backendInterface {
     async uploadPhotoToAlbum(arg0: bigint, arg1: PhotoInput): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.uploadPhotoToAlbum(arg0, await to_candid_PhotoInput_n104(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.uploadPhotoToAlbum(arg0, await to_candid_PhotoInput_n105(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.uploadPhotoToAlbum(arg0, await to_candid_PhotoInput_n104(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.uploadPhotoToAlbum(arg0, await to_candid_PhotoInput_n105(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -806,6 +839,9 @@ function from_candid__CaffeineStorageRefillResult_n4(_uploadFile: (file: Externa
 }
 function from_candid_opt_n100(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Group]): Group | null {
     return value.length === 0 ? null : from_candid_Group_n21(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n101(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_LegalInfo]): LegalInfo | null {
+    return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_GroupMember]): GroupMember | null {
     return value.length === 0 ? null : value[0];
@@ -1168,16 +1204,16 @@ function from_candid_record_n86(_uploadFile: (file: ExternalBlob) => Promise<Uin
     };
 }
 function from_candid_record_n94(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    name: string;
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<_FriendEntry>;
 }): {
-    name: string;
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<FriendEntry>;
 } {
     return {
-        name: value.name,
+        publicScreenName: value.publicScreenName,
         parentPermissionConfirmed: value.parentPermissionConfirmed,
         friends: from_candid_vec_n95(_uploadFile, _downloadFile, value.friends)
     };
@@ -1302,7 +1338,7 @@ function to_candid_BundleInput_n34(_uploadFile: (file: ExternalBlob) => Promise<
 function to_candid_ComparisonInput_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ComparisonInput): _ComparisonInput {
     return to_candid_record_n28(_uploadFile, _downloadFile, value);
 }
-async function to_candid_ExternalBlob_n106(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
+async function to_candid_ExternalBlob_n107(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
     return await _uploadFile(value);
 }
 function to_candid_FriendEntry_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: FriendEntry): _FriendEntry {
@@ -1314,8 +1350,8 @@ function to_candid_Hotel_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function to_candid_NewMessage_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: NewMessage): _NewMessage {
     return to_candid_record_n11(_uploadFile, _downloadFile, value);
 }
-async function to_candid_PhotoInput_n104(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PhotoInput): Promise<_PhotoInput> {
-    return await to_candid_record_n105(_uploadFile, _downloadFile, value);
+async function to_candid_PhotoInput_n105(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PhotoInput): Promise<_PhotoInput> {
+    return await to_candid_record_n106(_uploadFile, _downloadFile, value);
 }
 function to_candid_PriceRange_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PriceRange): _PriceRange {
     return to_candid_record_n47(_uploadFile, _downloadFile, value);
@@ -1332,8 +1368,8 @@ function to_candid_TicketType_n32(_uploadFile: (file: ExternalBlob) => Promise<U
 function to_candid_Ticket_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Ticket): _Ticket {
     return to_candid_record_n31(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserProfile_n101(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
-    return to_candid_record_n102(_uploadFile, _downloadFile, value);
+function to_candid_UserProfile_n102(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
+    return to_candid_record_n103(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n13(_uploadFile, _downloadFile, value);
@@ -1350,22 +1386,22 @@ function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Arra
 function to_candid_opt_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: bigint | null): [] | [bigint] {
     return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_record_n102(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    name: string;
+function to_candid_record_n103(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<FriendEntry>;
 }): {
-    name: string;
+    publicScreenName: string;
     parentPermissionConfirmed: boolean;
     friends: Array<_FriendEntry>;
 } {
     return {
-        name: value.name,
+        publicScreenName: value.publicScreenName,
         parentPermissionConfirmed: value.parentPermissionConfirmed,
-        friends: to_candid_vec_n103(_uploadFile, _downloadFile, value.friends)
+        friends: to_candid_vec_n104(_uploadFile, _downloadFile, value.friends)
     };
 }
-async function to_candid_record_n105(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+async function to_candid_record_n106(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     externalBlob: ExternalBlob;
     tags: Array<PhotoTag>;
     description: string;
@@ -1377,7 +1413,7 @@ async function to_candid_record_n105(_uploadFile: (file: ExternalBlob) => Promis
     imageUrl: string;
 }> {
     return {
-        externalBlob: await to_candid_ExternalBlob_n106(_uploadFile, _downloadFile, value.externalBlob),
+        externalBlob: await to_candid_ExternalBlob_n107(_uploadFile, _downloadFile, value.externalBlob),
         tags: value.tags,
         description: value.description,
         imageUrl: value.imageUrl
@@ -1722,7 +1758,7 @@ function to_candid_variant_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint
         perMonth: null
     } : value;
 }
-function to_candid_vec_n103(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<FriendEntry>): Array<_FriendEntry> {
+function to_candid_vec_n104(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<FriendEntry>): Array<_FriendEntry> {
     return value.map((x)=>to_candid_FriendEntry_n8(_uploadFile, _downloadFile, x));
 }
 function to_candid_vec_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<Ticket>): Array<_Ticket> {

@@ -3,6 +3,7 @@ import { useRouterState } from '@tanstack/react-router';
 import TopNav from './TopNav';
 import Footer from './Footer';
 import { branding } from '@/config/branding';
+import { getBackgroundForRoute, getAllBackgrounds } from '@/lib/routeBackgrounds';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+  const backgroundUrl = getBackgroundForRoute(currentPath);
 
   useEffect(() => {
     // Update document title based on current route and branding
@@ -18,13 +21,29 @@ export default function AppLayout({ children }: AppLayoutProps) {
       : branding.appName;
     
     document.title = baseTitle;
-  }, [routerState.location.pathname]);
+  }, [currentPath]);
+
+  useEffect(() => {
+    // Preload all background images to minimize navigation jank
+    const backgrounds = getAllBackgrounds();
+    backgrounds.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <TopNav />
-      <main className="flex-1">{children}</main>
-      <Footer />
+    <div className="min-h-screen flex flex-col route-background-container">
+      <div 
+        className="route-background-image"
+        style={{ backgroundImage: `url(${backgroundUrl})` }}
+      />
+      <div className="route-background-overlay" />
+      <div className="route-content-wrapper">
+        <TopNav />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
     </div>
   );
 }

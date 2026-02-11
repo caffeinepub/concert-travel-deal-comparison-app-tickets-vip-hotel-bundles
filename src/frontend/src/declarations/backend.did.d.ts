@@ -94,6 +94,7 @@ export interface Hotel {
   'checkOutTime' : [] | [string],
   'location' : [] | [GeoLocation],
 }
+export interface LegalInfo { 'legalName' : string }
 export interface Message {
   'id' : bigint,
   'content' : string,
@@ -170,7 +171,7 @@ export interface TripComparison {
   'foundVIPPackage' : boolean,
 }
 export interface UserProfile {
-  'name' : string,
+  'publicScreenName' : string,
   'parentPermissionConfirmed' : boolean,
   'friends' : Array<FriendEntry>,
 }
@@ -235,11 +236,13 @@ export interface _SERVICE {
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getGroup' : ActorMethod<[bigint], [] | [Group]>,
+  'getLegalInfo' : ActorMethod<[], [] | [LegalInfo]>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'leaveGroup' : ActorMethod<[bigint], undefined>,
   'removeFriend' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'saveLegalInfo' : ActorMethod<[LegalInfo], undefined>,
   'setParentPermissionStatus' : ActorMethod<[boolean], undefined>,
   'uploadPhotoToAlbum' : ActorMethod<[bigint, PhotoInput], undefined>,
 }

@@ -195,10 +195,11 @@ export const TripComparison = IDL.Record({
   'foundVIPPackage' : IDL.Bool,
 });
 export const UserProfile = IDL.Record({
-  'name' : IDL.Text,
+  'publicScreenName' : IDL.Text,
   'parentPermissionConfirmed' : IDL.Bool,
   'friends' : IDL.Vec(FriendEntry),
 });
+export const LegalInfo = IDL.Record({ 'legalName' : IDL.Text });
 export const PhotoInput = IDL.Record({
   'externalBlob' : ExternalBlob,
   'tags' : IDL.Vec(PhotoTag),
@@ -262,6 +263,7 @@ export const idlService = IDL.Service({
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getGroup' : IDL.Func([IDL.Nat], [IDL.Opt(Group)], ['query']),
+  'getLegalInfo' : IDL.Func([], [IDL.Opt(LegalInfo)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -271,6 +273,7 @@ export const idlService = IDL.Service({
   'leaveGroup' : IDL.Func([IDL.Nat], [], []),
   'removeFriend' : IDL.Func([IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'saveLegalInfo' : IDL.Func([LegalInfo], [], []),
   'setParentPermissionStatus' : IDL.Func([IDL.Bool], [], []),
   'uploadPhotoToAlbum' : IDL.Func([IDL.Nat, PhotoInput], [], []),
 });
@@ -462,10 +465,11 @@ export const idlFactory = ({ IDL }) => {
     'foundVIPPackage' : IDL.Bool,
   });
   const UserProfile = IDL.Record({
-    'name' : IDL.Text,
+    'publicScreenName' : IDL.Text,
     'parentPermissionConfirmed' : IDL.Bool,
     'friends' : IDL.Vec(FriendEntry),
   });
+  const LegalInfo = IDL.Record({ 'legalName' : IDL.Text });
   const PhotoInput = IDL.Record({
     'externalBlob' : ExternalBlob,
     'tags' : IDL.Vec(PhotoTag),
@@ -529,6 +533,7 @@ export const idlFactory = ({ IDL }) => {
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getGroup' : IDL.Func([IDL.Nat], [IDL.Opt(Group)], ['query']),
+    'getLegalInfo' : IDL.Func([], [IDL.Opt(LegalInfo)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -538,6 +543,7 @@ export const idlFactory = ({ IDL }) => {
     'leaveGroup' : IDL.Func([IDL.Nat], [], []),
     'removeFriend' : IDL.Func([IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'saveLegalInfo' : IDL.Func([LegalInfo], [], []),
     'setParentPermissionStatus' : IDL.Func([IDL.Bool], [], []),
     'uploadPhotoToAlbum' : IDL.Func([IDL.Nat, PhotoInput], [], []),
   });

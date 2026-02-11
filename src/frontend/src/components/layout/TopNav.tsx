@@ -33,6 +33,9 @@ export default function TopNav() {
     setMobileMenuOpen(false);
   };
 
+  // Safe display name with fallback
+  const displayName = profile?.publicScreenName || 'User';
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
@@ -71,7 +74,7 @@ export default function TopNav() {
                   className="hidden sm:flex"
                 >
                   <User className="mr-2 h-4 w-4" />
-                  {profile.name}
+                  {displayName}
                 </Button>
                 <Button
                   variant={isActive('/profile') ? 'secondary' : 'ghost'}
@@ -109,7 +112,7 @@ export default function TopNav() {
                       className="justify-start"
                     >
                       <User className="mr-2 h-4 w-4" />
-                      {profile.name}
+                      {displayName}
                     </Button>
                   )}
                 </nav>

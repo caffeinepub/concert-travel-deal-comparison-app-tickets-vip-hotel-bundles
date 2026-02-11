@@ -1,131 +1,104 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Transport-mode comparison + planned-choice upgrade flagging and autosave",
+  "title": "Per-route world landscape backgrounds with consistent dark overlay",
   "requirements": [
     {
-      "id": "REQ-47",
-      "summary": "Add multi-mode transportation offers to Trip Builder and include transport costs in bundle totals and cheapest-option detection.",
+      "id": "REQ-58",
+      "summary": "Implement per-route background selection at the shared AppLayout level, including sensible inheritance for nested routes.",
       "acceptanceCriteria": [
-        "Trip Builder has a section to add/edit/remove transportation offers (mode + name/provider + class/comfort label + price + currency).",
-        "Results calculation includes transport cost in the displayed total bundle cost when transport offers are provided.",
-        "If transport offers are provided, the comparison logic can identify the cheapest transport option for the trip (currency-matching with the rest of the bundle).",
-        "All new user-facing labels and helper text related to transport are in English."
+        "Each of these routes renders a distinct background image: /, /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile.",
+        "Nested routes reuse a sensible parent background (unless explicitly overridden): /memory-finder/$albumId uses the Memory Finder background; /groups/$groupId uses the Groups background.",
+        "Backgrounds are visually behind the existing UI (TopNav, page content, Footer) and do not break layout sizing (still full height).",
+        "Backgrounds render responsively (cover/center) without stretching artifacts, and remain performant (no visible jank when navigating)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/offers/TransportOffersEditor.tsx",
+          "path": "frontend/src/lib/routeBackgrounds.ts",
           "operation": "create",
-          "description": "Create a transport offers editor UI (add/edit/remove) supporting mode (plane/train/taxi/ground), provider/name, class/comfort label, price, and currency; implement as a controlled component similar in spirit to existing offers editors. Verify the component's usage instructions before implementing."
+          "description": "Add a centralized route-to-background mapping utility that resolves the correct background image URL for a given pathname, including nested-route inheritance rules for /memory-finder/* and /groups/*. Also expose a list of all background URLs for optional preloading."
         },
         {
-          "path": "frontend/src/pages/TripBuilderPage.tsx",
+          "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Extend TripBuilderState to include an array of transport offers, add validation only if needed (transport optional), and wire in the new TransportOffersEditor section with English labels and helper text. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/localComparisonEngine.ts",
-          "operation": "modify",
-          "description": "Extend local bundle generation to incorporate transport offers: if transport offers exist, include transport cost in totalCost and generate comparable bundles across transport modes; also expose a deterministic helper to identify the cheapest transport option under currency-matching rules."
-        },
-        {
-          "path": "frontend/src/components/results/BundleCard.tsx",
-          "operation": "modify",
-          "description": "Update bundle display to include a Transport section (when present) and ensure the displayed total and breakdown reflect transport cost in English."
-        },
-        {
-          "path": "frontend/src/pages/ResultsPage.tsx",
-          "operation": "modify",
-          "description": "Ensure results rendering uses the updated bundle shape (including transport), and surface an English hint when transport offers are present that totals include transport and the cheapest transport option is considered."
+          "description": "Apply the per-route background system at the layout level by reading the current pathname from the router state and selecting the mapped background image. Set the chosen background via a CSS variable or equivalent on the layout container so it consistently affects all routes, including nested routes. Add lightweight preloading of the known background images to minimize navigation jank."
         }
       ]
     },
     {
-      "id": "REQ-48",
-      "summary": "Implement deterministic better-value upgrade detection from user-entered offers and let users set baseline planned choices before saving.",
+      "id": "REQ-59",
+      "summary": "Add a consistent dark overlay/tint so foreground UI remains readable over landscape backgrounds while preserving the existing dark theme look.",
       "acceptanceCriteria": [
-        "The UI allows the user to indicate which ticket/transport/hotel-room is their planned (baseline) choice for the trip before saving.",
-        "Given a baseline choice, the app flags alternative offers as “better-value upgrades” when they are (a) cheaper than the baseline price AND (b) higher quality than the baseline (based on user-entered quality/class labels and/or hotel star rating/room label).",
-        "Flagged upgrade results are deterministic and come only from the user-entered offers (no external API calls).",
-        "Results UI visibly distinguishes flagged upgrades from the baseline planned choice (English labels)."
+        "All pages keep sufficient text contrast (headings, body text, buttons, cards) against the background image.",
+        "Cards and surfaces remain visually distinct from the background (no loss of boundaries).",
+        "The overlay/tint approach is consistent across all routes and does not introduce new non-English user-facing text."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/upgradeDetection.ts",
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Add shared CSS for the route background layer and a consistent dark overlay/tint (e.g., via fixed-position pseudo-elements) that sits behind TopNav/page/Footer but above the image, ensuring readable contrast and a consistent dark-theme presentation across all routes."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Update the layout structure/classes to ensure the background image layer and overlay are behind all existing UI, maintain full-height sizing, and avoid interfering with sticky TopNav/backdrop blur. Ensure the foreground content is positioned above the overlay for consistent readability."
+        }
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "summary": "Add required landscape background images as static assets under frontend/public/assets/generated and reference them by exact filenames from the route mapping.",
+      "acceptanceCriteria": [
+        "All new background image files exist in frontend/public/assets/generated and are referenced via absolute paths like /assets/generated/<filename>.",
+        "No backend changes are required to display backgrounds.",
+        "Build passes and all routes render their intended backgrounds in production mode."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png",
           "operation": "create",
-          "description": "Add a deterministic local upgrade detection utility that ranks quality based on user-entered class/comfort labels (tickets/transport) and hotel star rating + room type name/label heuristics; return flagged alternatives only from the user-entered offers with clear category grouping."
+          "description": "Add the static background asset for the / route (sign-in): frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/ResultsPage.tsx",
-          "operation": "modify",
-          "description": "Add a \"Planned choice\" section allowing users to select baseline ticket, baseline transport (if provided), and baseline hotel room (hotel + room type). Compute and render \"Better-value upgrades\" from local offers using the new upgradeDetection utility; visually distinguish baseline vs upgrades with English labels."
+          "path": "frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /home route: frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/components/results/BundleCard.tsx",
-          "operation": "modify",
-          "description": "Add optional visual markers to distinguish when the bundle includes the planned baseline choice or contains a flagged better-value upgrade item (English labels only)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-49",
-      "summary": "On save, persist baseline planned choices plus auto-flagged upgrades, and show those details in saved comparisons views with updated hooks/types.",
-      "acceptanceCriteria": [
-        "Clicking “Save Comparison” persists: (1) the user’s baseline planned choice and (2) the flagged better-value upgrade alternatives.",
-        "Saved comparisons list remains functional, and each comparison detail summary shows an English summary of the baseline planned choice plus counts (or a short list) of auto-saved flagged upgrades by category (tickets/transport/hotel rooms).",
-        "Deleting a comparison still deletes the entire saved comparison including its baseline and flagged upgrade metadata.",
-        "Frontend React Query hooks and types are updated to match the new backend TripComparison/ComparisonInput fields, with no TypeScript errors."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Update the save-comparison mutation to include the user's planned baseline selection and the locally flagged upgrade alternatives in the createTripComparison call payload (aligned to updated backend types), and update affected query typings so saved comparisons remain readable without TypeScript errors."
+          "path": "frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /trip-builder route: frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/ResultsPage.tsx",
-          "operation": "modify",
-          "description": "Wire saving to include (a) the selected baseline planned choices and (b) the computed flagged better-value upgrades; ensure Save Comparison is disabled or shows an English error when baseline selection is missing."
+          "path": "frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /results route: frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/SavedComparisonsPage.tsx",
-          "operation": "modify",
-          "description": "Update saved comparisons cards to display an English summary of the saved baseline planned choice (ticket/transport/hotel room) and counts (or short lists) of auto-saved flagged upgrades by category; keep delete flow intact."
+          "path": "frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /saved route: frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Update the saved trips list to remain functional with updated TripComparison fields and show an English one-line summary (baseline + upgrade counts) per saved comparison; keep delete flow intact."
+          "path": "frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /memory-finder and /memory-finder/$albumId routes: frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/backend.idl.ts",
-          "operation": "modify",
-          "description": "Update frontend IDL type definitions to match the new backend TripComparison/ComparisonInput fields used by the UI (planned choices + upgrade alternatives + transport-related fields), ensuring the generated actor typing aligns with updated hooks and pages."
-        }
-      ]
-    },
-    {
-      "id": "REQ-50",
-      "summary": "Ensure all newly introduced transport and upgrade-flagging copy is clear English only and avoids unrelated login/provider text.",
-      "acceptanceCriteria": [
-        "All new UI headings, button labels, helper text, and empty/error states related to: transport offers, “planned choice”, and “better-value upgrades” are in English.",
-        "No new UI strings mention third-party sign-in providers or unrelated login flows."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/offers/TransportOffersEditor.tsx",
-          "operation": "modify",
-          "description": "Audit and refine all transport-editor labels, helper text, placeholders, and empty states to ensure clear English wording and no unrelated auth/provider references. Verify the component's usage instructions before implementing."
+          "path": "frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /groups and /groups/$groupId routes: frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/ResultsPage.tsx",
-          "operation": "modify",
-          "description": "Audit and refine all planned-choice and better-value upgrade UI copy (errors, helper text, badges/labels) to ensure clear English wording and no unrelated auth/provider references."
+          "path": "frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the static background asset for the /profile route: frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png."
         },
         {
-          "path": "frontend/src/pages/SavedComparisonsPage.tsx",
+          "path": "frontend/src/lib/routeBackgrounds.ts",
           "operation": "modify",
-          "description": "Audit and refine saved-comparison baseline/upgrade summary labels and empty states to ensure clear English wording and no unrelated auth/provider references."
+          "description": "Wire the route-to-background mapping to reference the exact static asset filenames via absolute paths (e.g., /assets/generated/bg-home-tokyo-night.dim_1920x1080.png) with no backend involvement."
         }
       ]
     }

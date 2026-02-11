@@ -20,7 +20,7 @@ export default function ProfileSetupDialog() {
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
   const saveMutation = useSaveUserProfile();
   const queryClient = useQueryClient();
-  const [name, setName] = useState('');
+  const [screenName, setScreenName] = useState('');
   const [open, setOpen] = useState(false);
 
   const isAuthenticated = !!identity;
@@ -31,18 +31,18 @@ export default function ProfileSetupDialog() {
   }, [isAuthenticated, profileLoading, isFetched, userProfile]);
 
   const handleSave = async () => {
-    if (!name.trim()) return;
+    if (!screenName.trim()) return;
 
     try {
       await saveMutation.mutateAsync({ 
-        name: name.trim(),
+        publicScreenName: screenName.trim(),
         parentPermissionConfirmed: false,
         friends: []
       });
       // Invalidate queries to refresh profile data
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
       setOpen(false);
-      setName('');
+      setScreenName('');
     } catch (error) {
       console.error('Failed to save profile:', error);
     }
@@ -54,29 +54,32 @@ export default function ProfileSetupDialog() {
         <DialogHeader>
           <DialogTitle>Welcome to {branding.appName}</DialogTitle>
           <DialogDescription>
-            Please tell us your name to get started with {branding.tagline.toLowerCase()}
+            Choose a screen name to get started. This is your public username that others will see.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Your Name</Label>
+            <Label htmlFor="screenName">Screen Name / Username</Label>
             <Input
-              id="name"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="screenName"
+              placeholder="Enter your screen name"
+              value={screenName}
+              onChange={(e) => setScreenName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && name.trim()) {
+                if (e.key === 'Enter' && screenName.trim()) {
                   handleSave();
                 }
               }}
             />
+            <p className="text-xs text-muted-foreground">
+              This is your public display name for safety. Your legal name will be requested separately for checkout.
+            </p>
           </div>
         </div>
         <DialogFooter>
           <Button
             onClick={handleSave}
-            disabled={!name.trim() || saveMutation.isPending}
+            disabled={!screenName.trim() || saveMutation.isPending}
             className="w-full"
           >
             {saveMutation.isPending ? 'Saving...' : 'Continue'}

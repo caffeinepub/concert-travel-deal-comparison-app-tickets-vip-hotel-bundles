@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 35,
-  "summary": "Build a concert-travel deal comparison app that compares total trip cost across tickets, VIP packages, lodging, and multiple transportation modes (plane/train/taxi, etc.), and can flag and auto-save better-value upgrades (better seats, first class, nicer rooms) than the user’s originally saved choices, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding.",
+  "projectStateVersion": 41,
+  "summary": "Build a concert-travel deal comparison app that compares total trip cost across tickets, VIP packages, lodging, and multiple transportation modes (plane/train/taxi, etc.), can flag and auto-save better-value upgrades than the user’s originally saved choices, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding—now aligning app naming/branding with the chosen domain-friendly name \"EOATravelDeals\".",
   "architectural_notes": [
     "Core value: optimize total trip cost (tickets + VIP + lodging) rather than ticket price alone.",
     "Bundle generation requires integrating event ticket sources, VIP package availability, and hotel search/pricing.",
@@ -24,6 +24,7 @@
     "Auth/session handling issue: logging out of the external email/third-party quick sign-in provider logs the user out of TripTally unexpectedly (session not independent/persistent)."
   ],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- World landscape background: alpine mountains at sunrise, wide scenic vista (bg-signin-alps-sunrise.dim_1920x1080.png)\n- World landscape background: Tokyo night skyline with neon lights, cinematic wide shot (bg-home-tokyo-night.dim_1920x1080.png)\n- World landscape background: Santorini cliffside and Aegean sea, bright daylight (bg-tripbuilder-santorini.dim_1920x1080.png)\n- World landscape background: New York City skyline at golden hour, wide panorama (bg-results-nyc-goldenhour.dim_1920x1080.png)\n- World landscape background: Sahara desert dunes at sunset with dramatic shadows (bg-saved-sahara-sunset.dim_1920x1080.png)\n- World landscape background: Iceland waterfall with mist and basalt cliffs, moody overcast (bg-memoryfinder-iceland-waterfall.dim_1920x1080.png)\n- World landscape background: Norwegian fjord with steep green cliffs and calm water, soft daylight (bg-groups-norway-fjord.dim_1920x1080.png)\n- World landscape background: Machu Picchu mountains with clouds, early morning atmosphere (bg-profile-machu-picchu.dim_1920x1080.png)",
   "existing_features": [
     {
       "id": "feature-create-the-core-user-flow-to-compare-an-event-trip-s-total-cost-by-combining-concert-tickets-official-vip-packages-when-available-and-lodging-for-a-user-selected-travel-window-days-before-after-the-concert",
@@ -400,6 +401,78 @@
         "REQ-50"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-centralized-branding-configuration-so-the-app-name-is-set-to-eoatraveldeals-and-any-branding-controlled-alt-text-remains-accurate-and-in-english",
+      "title": "Update the centralized branding configuration so the app name is set to \"EOATravelDeals\" and any branding-controlled alt text remains accurate and in English.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-browser-tab-document-title-and-html-entrypoint-title-reflect-the-updated-app-name-eoatraveldeals-english-including-on-initial-load-before-react-effects-run",
+      "title": "Ensure the browser tab/document title and HTML entrypoint title reflect the updated app name \"EOATravelDeals\" (English), including on initial load before React effects run.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-vibevoyager-profile-setup-and-profile-display-ui-so-that-the-field-labeled-name-is-explicitly-a-public-screen-name-username-and-add-a-separate-legal-name-field-that-is-described-as-private-and-used-only-to-pre-fill-checkout-for-tickets-travel",
+      "title": "Update the VibeVoyager profile setup and profile display UI so that the field labeled \"Name\" is explicitly a public screen name (username), and add a separate \"Legal name\" field that is described as private and used only to pre-fill checkout for tickets/travel.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-any-feature-that-displays-or-sends-a-user-name-publicly-e-g-group-chat-author-name-top-navigation-profile-button-uses-the-public-screen-name-not-the-private-legal-name",
+      "title": "Ensure any feature that displays or sends a user name publicly (e.g., group chat author name, top navigation profile button) uses the public screen name, not the private legal name.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-account-linked-checkout-autofill-storage-for-the-user-s-private-legal-name-and-explicitly-do-not-store-full-card-numbers-or-sensitive-payment-credentials-in-the-canister-any-ui-copy-about-payment-must-not-imply-that-the-app-stores-raw-card-details",
+      "title": "Implement account-linked \"checkout autofill\" storage for the user’s private legal name and explicitly do not store full card numbers or sensitive payment credentials in the canister; any UI copy about payment must not imply that the app stores raw card details.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-generated-frontend-candid-bindings-idl-usage-frontend-src-backend-idl-ts-and-any-dependent-types-to-reflect-the-updated-userprofile-shape-so-react-query-hooks-and-mutations-compile-and-function",
+      "title": "Update the generated frontend Candid bindings/IDL usage (`frontend/src/backend.idl.ts` and any dependent types) to reflect the updated `UserProfile` shape so React Query hooks and mutations compile and function.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-per-route-background-system-so-each-main-page-shows-a-different-world-landscape-background-image-behind-the-page-content-unique-background-per-page-the-user-clicks-on-apply-this-at-the-shared-layout-level-applayout-so-it-works-consistently-across-routes",
+      "title": "Add a per-route background system so each main page shows a different world landscape background image behind the page content (unique background per page the user clicks on). Apply this at the shared layout level (AppLayout) so it works consistently across routes.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-foreground-content-remains-readable-on-top-of-landscape-backgrounds-by-adding-a-consistent-dark-overlay-tint-or-equivalent-that-preserves-the-existing-dark-theme-look-while-still-letting-the-landscape-be-visible",
+      "title": "Ensure foreground content remains readable on top of landscape backgrounds by adding a consistent dark overlay/tint (or equivalent) that preserves the existing dark theme look while still letting the landscape be visible.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-new-landscape-background-images-as-static-assets-under-frontend-public-assets-generated-and-wire-the-route-to-background-mapping-to-those-exact-filenames-no-backend-image-serving",
+      "title": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames (no backend image serving).",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -564,10 +637,42 @@
         "REQ-46"
       ],
       "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Rename the app to \"EOATravelDeals\" (domain-aligned) and update centralized branding config + all UI references accordingly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "In Profile (VibeVoyager), separate a public screen name/username from the user’s private legal name used for ticket/travel purchases; persist private purchase details to the user’s account so checkout can be pre-filled without re-entering info each time",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Add secure account-linked storage for checkout autofill (e.g., saved legal name and payment method) with safety/privacy protections so only screen name is shown publicly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Update the backend user profile model to store a public screen name (username) separately from a private legal name used for ticket/travel checkout autofill, and ensure existing profile reads/writes continue to work for authenticated users.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Use a different world-landscape background image for each main page/route (unique background per page)",
+      "reqIds": [],
+      "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Concert travel deal comparison app (tickets + VIP + hotel bundles)",
+  "projectName": "EOATravelDeals",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

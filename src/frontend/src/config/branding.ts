@@ -4,11 +4,10 @@
  */
 
 export const branding = {
-  appName: 'TripTally',
+  appName: 'EOATravelDeals',
   tagline: 'Smart Concert Travel Savings',
   logo: {
     primary: '/assets/generated/caffeine-ticketstay-logo-vintage-passport-v2.dim_512x512.png',
-    alt: 'TripTally vintage passport logo with preserved airplane ticket and concert ticket',
+    alt: 'EOATravelDeals vintage passport logo with airplane ticket and concert ticket',
   },
 } as const;
-

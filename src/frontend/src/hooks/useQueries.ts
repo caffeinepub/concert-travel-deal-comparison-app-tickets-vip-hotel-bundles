@@ -12,6 +12,7 @@ import type {
   NewMessage,
   ComparisonInput,
   BundleInput,
+  LegalInfo,
 } from '@/backend';
 import type { TripBuilderState } from '@/pages/TripBuilderPage';
 import type { Bundle } from '@/lib/localComparisonEngine';
@@ -65,6 +66,36 @@ export function useSetParentPermission() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
+}
+
+// Legal Info Queries
+export function useGetLegalInfo() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<LegalInfo | null>({
+    queryKey: ['legalInfo'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getLegalInfo();
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
+}
+
+export function useSaveLegalInfo() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (legalInfo: LegalInfo) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.saveLegalInfo(legalInfo);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['legalInfo'] });
     },
   });
 }

@@ -1,112 +1,86 @@
 {
   "kind": "build_request",
-  "title": "Auto-flag and auto-save better-value upgrades + add multi-mode transport comparison (train/taxi/etc.)",
+  "title": "Unique world-landscape background image per page/route",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-46",
-      "text": "Extend the backend trip-comparison data model so a saved TripComparison can (a) store the user’s originally planned/saved choices and (b) store a set of auto-flagged “better-value upgrades” (e.g., better seats/first class/nicer room) that are cheaper than the user’s planned choice.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "when they save their trip ... don't only flag their hotels ... but flag other things like front or seats or like first class tickets or even nicer hotel rooms that go cheaper than what they were going to originally pay ... and ... it ... pre saves the other ticket that it flag too"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend types support persisting a user selection for ticket, VIP (optional), hotel+room, and transport (if present) for each saved comparison.",
-        "Backend types support persisting lists of flagged upgrade alternatives for tickets, transport options, and hotel rooms.",
-        "createTripComparison stores the provided selection + flagged upgrade data along with the rest of the comparison inputs.",
-        "Existing getAllUserComparisons returns the additional saved selection + flagged upgrade data for each comparison (no runtime traps when reading existing saved comparisons created before this change)."
-      ]
-    },
-    {
-      "id": "REQ-47",
-      "text": "Add transportation options to the trip-building flow so users can compare total trip cost across multiple transport modes (at minimum: plane, train, and taxi/ground transport) and carry these inputs through to results and saving.",
+      "id": "REQ-58",
+      "text": "Add a per-route background system so each main page shows a different world landscape background image behind the page content (unique background per page the user clicks on). Apply this at the shared layout level (AppLayout) so it works consistently across routes.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "travel doesn't only do for plane tickets if they decide to take a train or taxis it compares everything and gives him the cheapest price"
+          "I want a different background  for each page you click on  different landscape from around the world"
         ]
       },
       "acceptanceCriteria": [
-        "Trip Builder has a section to add/edit/remove transportation offers (mode + name/provider + class/comfort label + price + currency).",
-        "Results calculation includes transport cost in the displayed total bundle cost when transport offers are provided.",
-        "If transport offers are provided, the comparison logic can identify the cheapest transport option for the trip (currency-matching with the rest of the bundle).",
-        "All new user-facing labels and helper text related to transport are in English."
+        "Each of these routes renders a distinct background image: /, /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile.",
+        "Nested routes reuse a sensible parent background (unless explicitly overridden): /memory-finder/$albumId uses the Memory Finder background; /groups/$groupId uses the Groups background.",
+        "Backgrounds are visually behind the existing UI (TopNav, page content, Footer) and do not break layout sizing (still full height).",
+        "Backgrounds render responsively (cover/center) without stretching artifacts, and remain performant (no visible jank when navigating)."
       ]
     },
     {
-      "id": "REQ-48",
-      "text": "Implement better-value upgrade detection in the local comparison logic so the app can flag higher-quality options that are cheaper than the user’s planned choice (tickets: e.g., “front row”; transport: e.g., “first class”; hotels: e.g., higher star rating / nicer room type), using only the offers the user entered.",
+      "id": "REQ-59",
+      "text": "Ensure foreground content remains readable on top of landscape backgrounds by adding a consistent dark overlay/tint (or equivalent) that preserves the existing dark theme look while still letting the landscape be visible.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
         ],
         "quotes": [
-          "flag other things like front or seats or like first class tickets or even nicer hotel rooms that go cheaper than what they were going to originally pay"
+          "different landscape from around the world"
         ]
       },
       "acceptanceCriteria": [
-        "The UI allows the user to indicate which ticket/transport/hotel-room is their planned (baseline) choice for the trip before saving.",
-        "Given a baseline choice, the app flags alternative offers as “better-value upgrades” when they are (a) cheaper than the baseline price AND (b) higher quality than the baseline (based on user-entered quality/class labels and/or hotel star rating/room label).",
-        "Flagged upgrade results are deterministic and come only from the user-entered offers (no external API calls).",
-        "Results UI visibly distinguishes flagged upgrades from the baseline planned choice (English labels)."
+        "All pages keep sufficient text contrast (headings, body text, buttons, cards) against the background image.",
+        "Cards and surfaces remain visually distinct from the background (no loss of boundaries).",
+        "The overlay/tint approach is consistent across all routes and does not introduce new non-English user-facing text."
       ]
     },
     {
-      "id": "REQ-49",
-      "text": "When saving a trip comparison, auto-save the flagged upgrade alternatives alongside the user’s originally planned choice, and surface both in the saved-comparisons (CostCompass) view.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "if it flags a ticket ... it doesn't only like pre-saved that their ticket ... but it also pre saves the other ticket that it flag too"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Clicking “Save Comparison” persists: (1) the user’s baseline planned choice and (2) the flagged better-value upgrade alternatives.",
-        "Saved comparisons list remains functional, and each comparison detail summary shows an English summary of the baseline planned choice plus counts (or a short list) of auto-saved flagged upgrades by category (tickets/transport/hotel rooms).",
-        "Deleting a comparison still deletes the entire saved comparison including its baseline and flagged upgrade metadata.",
-        "Frontend React Query hooks and types are updated to match the new backend TripComparison/ComparisonInput fields, with no TypeScript errors."
-      ]
-    },
-    {
-      "id": "REQ-50",
-      "text": "Ensure any new or modified user-facing copy introduced for upgrade flagging and transportation comparison is clear English and does not introduce non-English or garbled text.",
+      "id": "REQ-60",
+      "text": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames (no backend image serving).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-messages-4"
+        ],
+        "quotes": [
+          "different landscape from around the world"
         ]
       },
       "acceptanceCriteria": [
-        "All new UI headings, button labels, helper text, and empty/error states related to: transport offers, “planned choice”, and “better-value upgrades” are in English.",
-        "No new UI strings mention third-party sign-in providers or unrelated login flows."
+        "All new background image files exist in frontend/public/assets/generated and are referenced via absolute paths like /assets/generated/<filename>.",
+        "No backend changes are required to display backgrounds.",
+        "Build passes and all routes render their intended backgrounds in production mode."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
-    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or any files under frontend/src/components/ui.",
-    "Do not add external databases or external API integrations; upgrade flagging and comparisons must operate only on user-entered offers.",
-    "Use English for any user-facing text."
+    "Do not edit files in frontend immutablePaths (e.g., frontend/src/main.tsx, frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/components/ui/*).",
+    "Keep all user-facing text in English.",
+    "Serve backgrounds as static frontend assets (frontend/public/assets/generated); do not route image generation or fetching through the backend."
   ],
   "nonGoals": [
-    "Automatically scraping or aggregating prices from third-party ticket/hotel/transport websites.",
-    "Real-time price tracking, alerts, push notifications, or background jobs.",
-    "Implementing actual booking/checkout flows for tickets, hotels, trains, flights, or taxis."
+    "Do not implement dynamic/background rotation based on user location, time, or external APIs.",
+    "Do not add third-party image/CDN dependencies.",
+    "Do not change routes or add new routes solely for backgrounds.",
+    "Do not modify authentication gating behavior (protected routes should remain protected)."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "World landscape background: alpine mountains at sunrise, wide scenic vista (bg-signin-alps-sunrise.dim_1920x1080.png)",
+      "World landscape background: Tokyo night skyline with neon lights, cinematic wide shot (bg-home-tokyo-night.dim_1920x1080.png)",
+      "World landscape background: Santorini cliffside and Aegean sea, bright daylight (bg-tripbuilder-santorini.dim_1920x1080.png)",
+      "World landscape background: New York City skyline at golden hour, wide panorama (bg-results-nyc-goldenhour.dim_1920x1080.png)",
+      "World landscape background: Sahara desert dunes at sunset with dramatic shadows (bg-saved-sahara-sunset.dim_1920x1080.png)",
+      "World landscape background: Iceland waterfall with mist and basalt cliffs, moody overcast (bg-memoryfinder-iceland-waterfall.dim_1920x1080.png)",
+      "World landscape background: Norwegian fjord with steep green cliffs and calm water, soft daylight (bg-groups-norway-fjord.dim_1920x1080.png)",
+      "World landscape background: Machu Picchu mountains with clouds, early morning atmosphere (bg-profile-machu-picchu.dim_1920x1080.png)"
+    ],
     "edits": []
   },
   "userProfileUpdate": {
