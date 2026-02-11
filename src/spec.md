@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Provide clear, in-app guidance for installing EOATravelDeals on Android either as a PWA (recommended) or via a sideloaded debug APK, and ensure the Android build documentation is accurate.
+**Goal:** Restore a successful build and deployment by identifying the prior deployment failure, applying minimal fixes, and making critical startup/runtime failures visible in English.
 
 **Planned changes:**
-- Add an in-app entry point (visible to both signed-out and signed-in users) labeled clearly (e.g., “Install on Android”) that explains Android installation options.
-- Provide English-only, step-by-step instructions for (1) installing as an app via Android Chrome PWA and (2) installing a downloadable debug APK for developer/testing from the existing Capacitor Android wrapper.
-- Update/verify `frontend/docs/android.md` to include environment variable setup using `.env.capacitor` copied from `frontend/.env.capacitor.example`, note the HTTPS requirement for Internet Identity, and state the exact debug APK output path `android/app/build/outputs/apk/debug/app-debug.apk`, using the app name “EOATravelDeals”.
+- Re-run frontend and backend build/deploy, identify the exact failing step, and apply the minimum required code/config change(s) to make builds and deployment succeed.
+- Add safe defaults/fallback handling for missing/invalid configuration so the app fails gracefully instead of crashing on startup.
+- Add a visible, non-blocking English error surface (and console logging) for critical initialization/runtime failures that would otherwise cause a blank screen or silent failure (e.g., service worker registration/initialization issues).
 
-**User-visible outcome:** Users can find an “Install on Android” section inside the app that explains how to install EOATravelDeals as a PWA or (for developer/testing) how to obtain and sideload a debug APK, with matching repository documentation for building the APK.
+**User-visible outcome:** The app deploys successfully and loads reliably; if a critical startup step fails, users see a clear English message (and developers see logs) instead of a blank or silently broken app.

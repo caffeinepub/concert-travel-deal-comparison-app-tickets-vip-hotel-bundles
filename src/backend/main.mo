@@ -13,8 +13,6 @@ import AccessControl "authorization/access-control";
 import Storage "blob-storage/Storage";
 import Iter "mo:core/Iter";
 
-
-
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);

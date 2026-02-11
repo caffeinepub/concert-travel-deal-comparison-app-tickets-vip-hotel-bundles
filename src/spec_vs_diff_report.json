@@ -1,35 +1,80 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T01:33:23.620Z",
-  "summary": "REQ-64 and REQ-65 appear implemented via a new public “Install on Android” in-app entry point (/install-android) with PWA + APK guidance, and updated Android build documentation including CAPACITOR_SERVER_URL/.env.capacitor, HTTPS requirement for Internet Identity, and the debug APK output path. Some additional changes (e.g., service worker registration) were introduced beyond the explicit request.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-11T18:24:44.537Z",
+  "summary": "Diff adds a visible startup/runtime error surface (banner + global error listeners) and adds service worker registration with error callback plus Vite config fallbacks for II_URL/process env. However, the diff summary also indicates multiple unrelated product/UI/feature changes beyond deployment-fix scope, and it does not provide clear evidence that the exact prior deployment failure was identified and minimally fixed to ensure a clean build/deploy.",
+  "missing_requirements": [
     {
-      "description": "Automatic service worker registration for PWA support added at app startup (beyond just adding install guidance).",
-      "reason": "BuildRequest focuses on an in-app install entry point and documentation for APK/PWA instructions; it does not request implementation changes to enable PWA/service worker behavior.",
+      "id": "REQ-70",
+      "requirement": "Re-run full build/deploy, identify exact cause of previous deployment failure, and apply minimum necessary changes so project deploys successfully again (clean frontend+backend build; reachable app; safe config fallback).",
+      "reason": "The diff shows some potentially relevant mitigations (env fallback, process shim, SW path), but provides no evidence of the exact prior failure cause being identified, nor proof that a clean build/deploy now succeeds and the deployed app is reachable/non-blank. Also, the presence of many unrelated changes suggests changes may not be limited to what’s necessary.",
       "evidence": [
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "description": "Repository documentation index page added/updated (docs README) beyond the specific requirement to update frontend/docs/android.md.",
-      "reason": "REQ-65 only specifies keeping frontend/docs/android.md accurate; adding/modifying frontend/docs/README.md is not explicitly requested.",
-      "evidence": [
-        "frontend/docs/README.md"
+        "frontend/vite.config.ts",
+        "frontend/src/lib/pwa/registerServiceWorker.ts",
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "Renaming/rewriting Home page CTAs and value proposition content (e.g., \"Start with RouteRally\" / \"View CostCompass\")",
+      "reason": "Not requested by REQ-70/REQ-71 and conflicts with constraint to avoid unrelated feature/branding changes.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Trip comparison logic changes including transport cost inclusion and additional bundle generation/upgrade detection behavior",
+      "reason": "Not requested; appears to be new/expanded product functionality unrelated to restoring build/deploy.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Saved comparisons UI enhancements (baseline choice summaries, counts of auto-saved upgrades)",
+      "reason": "Not requested by REQ-70/REQ-71; appears to be unrelated feature work.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Top navigation change adding a persistent \"Install on Android\" link for all users",
+      "reason": "Not requested; changes navigation behavior beyond deployment-fix scope.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Footer attribution link changes including UTM tracking and fallback app identifier update",
+      "reason": "Not requested and unrelated to diagnosing/fixing deployment failures.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Authentication flow/UI behavior changes (e.g., navigation to profile after sign-in, toast error notifications, query cache clearing on logout)",
+      "reason": "Not requested and may violate non-goal of not changing authentication behavior unless required for deployment fix.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "New/changed profile onboarding dialog and added legal info handling messaging (public screen name + legal name requested separately for checkout)",
+      "reason": "Not requested; appears to be new product behavior/content outside deployment recovery scope.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/docs/README.md",
-    "frontend/docs/android.md",
     "frontend/src/App.tsx",
-    "frontend/src/components/auth/RequireAuth.tsx",
-    "frontend/src/components/layout/TopNav.tsx",
-    "frontend/src/lib/routeBackgrounds.ts",
-    "frontend/src/pages/InstallAndroidPage.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/pwa/StartupErrorBanner.tsx",
+    "frontend/src/lib/pwa/registerServiceWorker.ts",
+    "frontend/vite.config.ts",
     "project_state.json"
   ]
 }

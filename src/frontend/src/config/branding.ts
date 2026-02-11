@@ -7,7 +7,7 @@ export const branding = {
   appName: 'EOATravelDeals',
   tagline: 'Smart Concert Travel Savings',
   logo: {
-    primary: '/assets/generated/caffeine-ticketstay-logo-vintage-passport-v2.dim_512x512.png',
-    alt: 'EOATravelDeals vintage passport logo with airplane ticket and concert ticket',
+    primary: '/assets/generated/caffeine-ticketstay-logo-vintage-passport-v3.dim_512x512.png',
+    alt: 'Passport-shaped logo featuring a preserved airplane ticket and a distinct concert ticket',
   },
 } as const;

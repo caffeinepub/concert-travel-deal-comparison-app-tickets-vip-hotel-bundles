@@ -1,6 +1,6 @@
 import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import SignInPage from './pages/SignInPage';
 import HomePage from './pages/HomePage';
@@ -115,10 +115,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
+// Global startup error state
+let globalStartupError: string | null = null;
+
+export function setGlobalStartupError(error: string) {
+  globalStartupError = error;
+  // Dispatch custom event so components can react
+  window.dispatchEvent(new CustomEvent('startup-error', { detail: error }));
+}
+
+export function getGlobalStartupError(): string | null {
+  return globalStartupError;
+}
+
 export default function App() {
+  const [, setForceUpdate] = useState(0);
+
   useEffect(() => {
-    // Register service worker for PWA support
-    registerServiceWorker();
+    // Register service worker for PWA support with error handling
+    registerServiceWorker({
+      onError: (error) => {
+        const errorMessage = 'Service worker registration failed. The app may not work offline.';
+        console.error(errorMessage, error);
+        setGlobalStartupError(errorMessage);
+        setForceUpdate(prev => prev + 1);
+      },
+    });
   }, []);
 
   return (

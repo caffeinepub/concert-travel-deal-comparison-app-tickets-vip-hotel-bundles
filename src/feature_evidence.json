@@ -2,14 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-clear-in-app-entry-point-that-explains-how-to-install-eoatraveldeals-on-a-phone-as-a-downloadable-app-offering-both-1-pwa-installation-from-android-chrome-and-2-a-developer-testing-option-to-install-a-sideloaded-debug-apk-built-from-the-existing-capacitor-android-wrapper",
-      "featureTitle": "Add a clear in-app entry point that explains how to install EOATravelDeals on a phone as a downloadable app, offering both (1) PWA installation from Android Chrome and (2) a developer/testing option to install a sideloaded debug APK built from the existing Capacitor Android wrapper.",
+      "featureId": "feature-re-run-the-full-build-and-deploy-for-the-current-project-identify-the-exact-cause-of-the-previous-deployment-failure-and-implement-the-minimum-necessary-code-config-changes-so-the-project-deploys-successfully-again",
+      "featureTitle": "Re-run the full build and deploy for the current project, identify the exact cause of the previous deployment failure, and implement the minimum necessary code/config changes so the project deploys successfully again.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/auth/RequireAuth.tsx",
-        "frontend/src/components/layout/TopNav.tsx",
-        "frontend/src/lib/routeBackgrounds.ts",
-        "frontend/src/pages/InstallAndroidPage.tsx"
+        "frontend/src/lib/pwa/registerServiceWorker.ts",
+        "frontend/vite.config.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -21,16 +19,18 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-64"
+        "REQ-70"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-repository-documentation-remains-accurate-and-complete-for-producing-a-downloadable-android-apk-from-the-existing-capacitor-wrapper-including-the-required-environment-variable-configuration-and-the-exact-apk-output-path",
-      "featureTitle": "Ensure the repository documentation remains accurate and complete for producing a downloadable Android APK from the existing Capacitor wrapper, including the required environment variable configuration and the exact APK output path.",
+      "featureId": "feature-add-a-clear-english-error-surface-for-any-startup-runtime-failure-that-would-prevent-the-app-from-loading-e-g-failed-service-worker-registration-or-initialization-errors-so-deployment-issues-are-visible-and-actionable-rather-than-silent",
+      "featureTitle": "Add a clear, English error surface for any startup/runtime failure that would prevent the app from loading (e.g., failed service worker registration or initialization errors), so deployment issues are visible and actionable rather than silent.",
       "files": [
-        "frontend/docs/README.md",
-        "frontend/docs/android.md"
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/components/pwa/StartupErrorBanner.tsx",
+        "frontend/src/lib/pwa/registerServiceWorker.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -42,7 +42,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-65"
+        "REQ-71"
       ],
       "confidence": "high"
     }

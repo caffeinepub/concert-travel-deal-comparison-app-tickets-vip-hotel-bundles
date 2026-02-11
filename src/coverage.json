@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T01:33:23.624Z",
+  "generatedAt": "2026-02-11T18:24:44.542Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,51 +11,50 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-64",
-        "summary": "Add a clear in-app entry point that explains how to install EOATravelDeals on a phone as a downloadable app, offering both (1) PWA installation from Android Chrome and (2) a developer/testing option to install a sideloaded debug APK built from the existing Capacitor Android wrapper.",
+        "id": "REQ-70",
+        "summary": "Re-run the full build and deploy for the current project, identify the exact cause of the previous deployment failure, and implement the minimum necessary code/config changes so the project deploys successfully again.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/InstallAndroidPage.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/auth/RequireAuth.tsx",
-          "frontend/src/components/layout/TopNav.tsx",
-          "frontend/src/lib/routeBackgrounds.ts"
+          "frontend/vite.config.ts",
+          "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/InstallAndroidPage.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/auth/RequireAuth.tsx",
-          "frontend/src/components/layout/TopNav.tsx",
-          "frontend/src/lib/routeBackgrounds.ts"
+          "frontend/vite.config.ts",
+          "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-65",
-        "summary": "Ensure the repository documentation remains accurate and complete for producing a downloadable Android APK from the existing Capacitor wrapper, including the required environment variable configuration and the exact APK output path.",
+        "id": "REQ-71",
+        "summary": "Add a clear, English error surface for any startup/runtime failure that would prevent the app from loading (e.g., failed service worker registration or initialization errors), so deployment issues are visible and actionable rather than silent.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/docs/android.md",
-          "frontend/docs/README.md"
+          "frontend/src/components/pwa/StartupErrorBanner.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/docs/android.md",
-          "frontend/docs/README.md"
+          "frontend/src/components/pwa/StartupErrorBanner.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "frontend/src/App.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/docs/README.md",
-    "frontend/docs/android.md",
     "frontend/src/App.tsx",
-    "frontend/src/components/auth/RequireAuth.tsx",
-    "frontend/src/components/layout/TopNav.tsx",
-    "frontend/src/lib/routeBackgrounds.ts",
-    "frontend/src/pages/InstallAndroidPage.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/pwa/StartupErrorBanner.tsx",
+    "frontend/src/lib/pwa/registerServiceWorker.ts",
+    "frontend/vite.config.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

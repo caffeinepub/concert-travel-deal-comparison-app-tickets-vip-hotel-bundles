@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 45,
+  "projectStateVersion": 51,
   "summary": "Build a concert-travel deal comparison app that compares total trip cost across tickets, VIP packages, lodging, and multiple transportation modes (plane/train/taxi, etc.), can flag and auto-save better-value upgrades than the user’s originally saved choices, with teen-friendly safety/social features and cohesive quirky vintage travel-ticket branding—now aligning app naming/branding with the chosen domain-friendly name \"EOATravelDeals\".",
   "architectural_notes": [
     "Core value: optimize total trip cost (tickets + VIP + lodging) rather than ticket price alone.",
@@ -23,7 +23,7 @@
     "On the default onboarding/sign-up screen, the top \"Sign in\" button routes users to an email/third-party quick sign-in hub (TikTok/YouTube/Gmail/etc.) instead of the intended sign-in method.",
     "Auth/session handling issue: logging out of the external email/third-party quick sign-in provider logs the user out of TripTally unexpectedly (session not independent/persistent)."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-the-core-user-flow-to-compare-an-event-trip-s-total-cost-by-combining-concert-tickets-official-vip-packages-when-available-and-lodging-for-a-user-selected-travel-window-days-before-after-the-concert",
@@ -512,6 +512,54 @@
         "REQ-65"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-generate-a-new-unique-primary-brand-logo-image-that-visually-combines-1-a-preserved-airplane-ticket-and-2-a-distinct-concert-ticket-all-within-a-passport-shaped-composition",
+      "title": "Generate a new unique primary brand logo image that visually combines (1) a preserved airplane ticket and (2) a distinct concert ticket, all within a passport-shaped composition.",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-centralized-branding-configuration-in-frontend-src-config-branding-ts-to-reference-the-newly-generated-primary-logo-asset-path-and-ensure-the-logo-alt-text-remains-accurate-and-in-english",
+      "title": "Update the centralized branding configuration in `frontend/src/config/branding.ts` to reference the newly generated primary logo asset path, and ensure the logo alt text remains accurate and in English.",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-static-background-image-asset-for-the-index-sign-in-route-that-visually-looks-like-a-dense-typography-collage-of-music-content-lyrics-style-text-fragments-and-or-band-artist-names-spanning-different-eras-including-boy-bands-girl-groups-and-solo-artists-and-place-the-asset-under-frontend-public-assets-generated",
+      "title": "Add a new static background image asset for the index sign-in route (/) that visually looks like a dense typography collage of music content (lyrics-style text fragments and/or band/artist names spanning different eras, including boy bands, girl groups, and solo artists), and place the asset under `frontend/public/assets/generated`.",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-per-route-background-mapping-so-the-index-sign-in-route-uses-the-new-music-typography-collage-background-instead-of-the-current-alps-sunrise-background",
+      "title": "Update the per-route background mapping so the index sign-in route `/` uses the new music-typography collage background instead of the current Alps sunrise background.",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-re-run-the-full-build-and-deploy-for-the-current-project-identify-the-exact-cause-of-the-previous-deployment-failure-and-implement-the-minimum-necessary-code-config-changes-so-the-project-deploys-successfully-again",
+      "title": "Re-run the full build and deploy for the current project, identify the exact cause of the previous deployment failure, and implement the minimum necessary code/config changes so the project deploys successfully again.",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-clear-english-error-surface-for-any-startup-runtime-failure-that-would-prevent-the-app-from-loading-e-g-failed-service-worker-registration-or-initialization-errors-so-deployment-issues-are-visible-and-actionable-rather-than-silent",
+      "title": "Add a clear, English error surface for any startup/runtime failure that would prevent the app from loading (e.g., failed service worker registration or initialization errors), so deployment issues are visible and actionable rather than silent.",
+      "reqIds": [
+        "REQ-71"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -712,6 +760,12 @@
     {
       "id": "AR-35",
       "summary": "Provide an Android app build/distribution so the user can download and test the app on Android (e.g., APK/AAB via Play/Internal testing)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Update the main sign-in/welcome page background to use a music-themed typography collage (lyrics or band/artist names from across the years: boy bands, girl groups, solo artists) behind the \"Welcome to EOA\" content",
       "reqIds": [],
       "status": "pending"
     }

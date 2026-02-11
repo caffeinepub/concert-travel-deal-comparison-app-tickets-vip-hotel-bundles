@@ -1,69 +1,57 @@
 {
   "kind": "build_request",
-  "title": "Provide a downloadable Android app experience (APK + install guidance) for EOATravelDeals",
-  "priority": "normal",
+  "title": "Retry build/deploy: diagnose deployment failure and restore successful deployment",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-64",
-      "text": "Add a clear in-app entry point that explains how to install EOATravelDeals on a phone as a downloadable app, offering both (1) PWA installation from Android Chrome and (2) a developer/testing option to install a sideloaded debug APK built from the existing Capacitor Android wrapper.",
-      "target": "frontend",
+      "id": "REQ-70",
+      "text": "Re-run the full build and deploy for the current project, identify the exact cause of the previous deployment failure, and implement the minimum necessary code/config changes so the project deploys successfully again.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-3"
         ],
         "quotes": [
-          "I don't want to app web page I want to downloadable app that you can download onto your phone and use"
+          "Try again"
         ]
       },
       "acceptanceCriteria": [
-        "Unauthenticated and authenticated users can find an in-app link or section labeled in clear English (e.g., “Install on Android”)",
-        "The in-app instructions include both paths: “Install as an app (recommended)” via PWA and “Downloadable APK (developer/testing)” via Capacitor build",
-        "The in-app instructions do not mention any non-Internet-Identity sign-in methods (no Google/Instagram/email auth references)",
-        "All user-facing text added/modified for this entry point is in English"
+        "A clean build completes successfully for both frontend and backend (no TypeScript/Vite build errors; no Motoko compile errors).",
+        "Deployment completes successfully and produces a reachable app that loads without a blank screen.",
+        "If the deployment failure is caused by configuration, the repo contains a safe default/fallback so missing or invalid values fail gracefully (no crash on startup).",
+        "All changes are limited to what is necessary to make the build/deploy succeed; no unrelated feature work is introduced."
       ]
     },
     {
-      "id": "REQ-65",
-      "text": "Ensure the repository documentation remains accurate and complete for producing a downloadable Android APK from the existing Capacitor wrapper, including the required environment variable configuration and the exact APK output path.",
+      "id": "REQ-71",
+      "text": "Add a clear, English error surface for any startup/runtime failure that would prevent the app from loading (e.g., failed service worker registration or initialization errors), so deployment issues are visible and actionable rather than silent.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-3"
         ],
         "quotes": [
-          "I don't want to app web page I want to downloadable app that you can download onto your phone and use"
+          "Try again"
         ]
       },
       "acceptanceCriteria": [
-        "`frontend/docs/android.md` includes (and keeps) explicit steps to set `CAPACITOR_SERVER_URL` via a `.env.capacitor` file copied from `frontend/.env.capacitor.example`",
-        "The docs explicitly state that the Capacitor server URL must be HTTPS for Internet Identity to work",
-        "The docs explicitly state the debug APK output path: `android/app/build/outputs/apk/debug/app-debug.apk`",
-        "Documentation is clear English and consistent with the current app name “EOATravelDeals”"
+        "When a critical initialization step fails (e.g., service worker registration), an English error message is logged and a visible non-blocking UI message is shown somewhere appropriate (e.g., a toast or alert), rather than failing silently.",
+        "User-facing error text remains in English and does not contain garbled characters."
       ]
     }
   ],
   "constraints": [
-    "Do not add or rely on any authentication provider other than Internet Identity.",
-    "Do not edit files under frontend/src/components/ui or any other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Do not introduce any external backend services or databases; keep the existing Internet Computer canister architecture unchanged."
+    "Backend must remain a single-actor Motoko canister; keep all logic in backend/main.mo and introduce backend/migration.mo only if state migration is required.",
+    "Do not edit files under frontend/src/components/ui or any frontend immutable paths (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx). Compose existing components instead.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Publishing to the Google Play Store (AAB signing, Play Console setup, store listing)",
-    "Building an iOS native wrapper/app",
-    "Adding push notifications or real-time socket features"
+    "Do not add new product features unrelated to restoring successful build/deploy.",
+    "Do not change routes, branding, or authentication behavior unless it is required to fix the deployment failure.",
+    "Do not introduce any new backend services, databases, or third-party auth providers."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

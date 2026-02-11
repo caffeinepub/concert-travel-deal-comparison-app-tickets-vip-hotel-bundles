@@ -24,7 +24,7 @@ const getInternetIdentityURL = () => {
 };
 
 // Set the validated II_URL
-process.env.II_URL = getInternetIdentityURL();
+const validatedIIURL = getInternetIdentityURL();
 
 export default defineConfig({
   plugins: [
@@ -57,6 +57,9 @@ export default defineConfig({
     },
   },
   define: {
-    'process.env.II_URL': JSON.stringify(process.env.II_URL),
+    // Ensure II_URL is always defined with a safe fallback
+    'process.env.II_URL': JSON.stringify(validatedIIURL),
+    // Add minimal process shim to prevent "process is not defined" errors
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
   },
 });

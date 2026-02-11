@@ -1,10 +1,10 @@
 {
-  "frontend/src/App.tsx": "Main app component with TanStack Router setup, theme provider, service worker registration, and new /install-android route wired to InstallAndroidPage.",
+  "frontend/src/App.tsx": "Main app component with TanStack Router setup, theme provider, service worker registration with error callback that triggers global startup error surface, and global error state management.",
   "frontend/src/pages/HomePage.tsx": "Landing page with hero section featuring the vintage passport logo, app tagline display, explaining the app's value proposition with CTAs renamed to \"Start with RouteRally\" and \"View CostCompass\".",
   "frontend/src/pages/TripBuilderPage.tsx": "Trip builder form page where users input event details, travel dates, and add ticket/VIP/hotel/transport options before generating bundle comparisons with transport cost inclusion.",
   "frontend/src/pages/ResultsPage.tsx": "Results page displaying generated bundles with transport cost inclusion, planned choice selection UI, better-value upgrade detection and flagging, and save functionality that persists baseline and upgrade alternatives, now properly handling null isUpgrade values.",
   "frontend/src/pages/SavedComparisonsPage.tsx": "Saved comparisons list page showing user's saved trip comparisons with planned baseline choice summaries and counts of auto-saved better-value upgrades by category.",
-  "frontend/src/components/layout/AppLayout.tsx": "Main layout wrapper with top navigation, footer, route-based backgrounds, document title management, and offline status banner integration.",
+  "frontend/src/components/layout/AppLayout.tsx": "Main layout wrapper with top navigation, footer, route-based backgrounds, document title management, offline status banner, and startup error banner integration.",
   "frontend/src/components/layout/TopNav.tsx": "Top navigation bar with auth-aware nav items including a persistent \"Install on Android\" link visible to both authenticated and unauthenticated users, with proper TypeScript interface for nav items with optional icon property.",
   "frontend/src/components/layout/Footer.tsx": "Footer component with copyright notice using centralized app name and updated fallback app identifier from 'ticketstay-app' to 'concertbundle-app', with attribution link to caffeine.ai including UTM tracking.",
   "frontend/src/components/auth/LoginButton.tsx": "Login/logout button component managing Internet Identity authentication, query cache clearing on logout, navigation to profile page after successful sign-in, and toast error notifications for login failures.",
@@ -29,7 +29,7 @@
   "frontend/src/components/memory/PhotoGrid.tsx": "Photo grid component rendering album photos with hover controls for tagging and deleting, showing existing tags, and opening tag panel.",
   "frontend/src/components/memory/TagPeoplePanel.tsx": "Dialog for manually tagging people in photos by selecting from friends list or entering principal ID, with clear messaging that no automated face recognition is used.",
   "frontend/src/components/groups/ChatPanel.tsx": "Chat panel component with scrollable message history, message composer with keyboard shortcuts, and send functionality with loading states.",
-  "frontend/src/config/branding.ts": "Centralized branding configuration with app name \"EOATravelDeals\", tagline \"Smart Concert Travel Savings\", and updated logo alt text that accurately describes the vintage passport logo without referencing the old app name.",
+  "frontend/src/config/branding.ts": "Centralized branding configuration with app name \"EOATravelDeals\", tagline \"Smart Concert Travel Savings\", and updated logo reference to the new v3 passport-shaped logo asset with accurate English alt text describing the preserved airplane ticket and distinct concert ticket elements.",
   "frontend/src/main.tsx": "Application entry point that sets the document title from centralized branding config and wraps the app with QueryClient and InternetIdentity providers.",
   "frontend/index.html": "HTML entry point with PWA meta tags, manifest link, theme color, and app icon references for Android installation support.",
   "frontend/src/pages/ProfilePage.tsx": "Authenticated profile dashboard page displaying user's public screen name, private legal name editor section, and saved trip comparisons with planned choice and upgrade count summaries, with view and delete actions.",
@@ -37,7 +37,7 @@
   "frontend/src/pages/SignInPage.tsx": "Mobile-style onboarding sign-in page for the `/` route with \"Welcome to EOA\" heading and clear Internet Identity passkey messaging, redirecting authenticated users to `/profile`.",
   "frontend/src/config.ts": "Configuration module that creates and exports the actor factory function for connecting to the backend canister with proper agent setup for both local and production environments.",
   "frontend/src/components/ui/sonner.tsx": "Toaster component wrapper for the Sonner toast library with theme integration and styled toast notifications.",
-  "frontend/vite.config.ts": "Vite build configuration with React plugin, path aliases, development server settings, environment variable handling, and Internet Identity URL validation that ensures the official Internet Identity provider URL is used when no valid URL is configured.",
+  "frontend/vite.config.ts": "Vite build configuration with hardened environment injection, safe II_URL fallback to official Internet Identity provider, and minimal process shim to prevent \"process is not defined\" runtime errors.",
   "frontend/tsconfig.json": "TypeScript compiler configuration with ES2020 target, React JSX support, and path alias mapping for the @ import prefix.",
   "frontend/tsconfig.node.json": "TypeScript configuration for Node.js tooling files like vite.config.ts with ESNext module resolution.",
   "frontend/postcss.config.js": "PostCSS configuration enabling Tailwind CSS and Autoprefixer plugins for CSS processing.",
@@ -52,7 +52,7 @@
   "frontend/public/manifest.webmanifest": "Web app manifest defining EOATravelDeals as an installable PWA with standalone display mode, app icons, shortcuts, and Android-specific configuration.",
   "frontend/public/offline.html": "Static offline fallback page with clear messaging and retry button, served by the service worker when the app is offline.",
   "frontend/public/sw.js": "Service worker implementing app shell caching strategy with network-first approach, offline fallback, and automatic cache management for PWA support.",
-  "frontend/src/lib/pwa/registerServiceWorker.ts": "Helper function to register the service worker only in production builds with periodic update checks and error handling.",
+  "frontend/src/lib/pwa/registerServiceWorker.ts": "Service worker registration helper with callback-based API for success/error handling, using Vite base URL for resilient path resolution across deployment environments.",
   "frontend/src/components/pwa/OfflineStatusBanner.tsx": "Banner component that listens to browser online/offline events and displays connection status messages with visual indicators.",
   "frontend/capacitor.config.ts": "Capacitor configuration for Android wrapper pointing to production HTTPS URL with WebView settings optimized for Internet Identity authentication.",
   "frontend/.env.capacitor.example": "Example environment file documenting how to configure the production HTTPS URL for the Capacitor Android wrapper.",
@@ -68,5 +68,6 @@
   "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml": "Round adaptive launcher icon configuration for Android launchers that prefer circular icons.",
   "frontend/docs/android.md": "Comprehensive English documentation covering PWA installation (recommended), debug APK building with explicit .env.capacitor configuration steps, HTTPS requirement for Internet Identity, and the exact debug APK output path at android/app/build/outputs/apk/debug/app-debug.apk.",
   "frontend/docs/README.md": "Documentation index linking to the Android installation guide with updated quick links to PWA installation, APK build guide, .env.capacitor configuration, and troubleshooting sections.",
-  "frontend/src/pages/InstallAndroidPage.tsx": "New page displaying Android installation instructions with two clearly separated sections: PWA installation (recommended) and debug APK build/sideload guidance, including HTTPS requirements for Internet Identity and the exact APK output path."
+  "frontend/src/pages/InstallAndroidPage.tsx": "New page displaying Android installation instructions with two clearly separated sections: PWA installation (recommended) and debug APK build/sideload guidance, including HTTPS requirements for Internet Identity and the exact APK output path.",
+  "frontend/src/components/pwa/StartupErrorBanner.tsx": "Non-blocking banner component that listens for global errors, unhandled rejections, and custom startup-error events, displaying clear English error messages with dismiss functionality."
 }

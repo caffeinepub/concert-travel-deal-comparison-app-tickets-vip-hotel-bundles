@@ -3,6 +3,7 @@ import { useRouterState } from '@tanstack/react-router';
 import TopNav from './TopNav';
 import Footer from './Footer';
 import OfflineStatusBanner from '../pwa/OfflineStatusBanner';
+import StartupErrorBanner from '../pwa/StartupErrorBanner';
 import { branding } from '@/config/branding';
 import { getBackgroundForRoute, getAllBackgrounds } from '@/lib/routeBackgrounds';
 
@@ -36,6 +37,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col route-background-container">
       <OfflineStatusBanner />
+      <StartupErrorBanner />
       <div 
         className="route-background-image"
         style={{ backgroundImage: `url(${backgroundUrl})` }}

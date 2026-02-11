@@ -1,64 +1,62 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Android install entry point + accurate Capacitor APK documentation for EOATravelDeals",
+  "title": "Restore successful frontend build/deploy and add visible startup failure surfacing",
   "requirements": [
     {
-      "id": "REQ-64",
-      "summary": "Add an in-app “Install on Android” entry point with English instructions for PWA install (recommended) and a debug APK sideload option via the existing Capacitor Android wrapper.",
+      "id": "REQ-70",
+      "summary": "Make minimal frontend config/runtime adjustments to prevent deploy-time blank screens and ensure the frontend build reliably succeeds with safe fallbacks for missing/invalid configuration.",
       "acceptanceCriteria": [
-        "Unauthenticated and authenticated users can find an in-app link or section labeled in clear English (e.g., “Install on Android”)",
-        "The in-app instructions include both paths: “Install as an app (recommended)” via PWA and “Downloadable APK (developer/testing)” via Capacitor build",
-        "The in-app instructions do not mention any non-Internet-Identity sign-in methods (no Google/Instagram/email auth references)",
-        "All user-facing text added/modified for this entry point is in English"
+        "A clean build completes successfully for both frontend and backend (no TypeScript/Vite build errors; no Motoko compile errors).",
+        "Deployment completes successfully and produces a reachable app that loads without a blank screen.",
+        "If the deployment failure is caused by configuration, the repo contains a safe default/fallback so missing or invalid values fail gracefully (no crash on startup).",
+        "All changes are limited to what is necessary to make the build/deploy succeed; no unrelated feature work is introduced."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/InstallAndroidPage.tsx",
-          "operation": "create",
-          "description": "Create an “Install on Android” page that presents two clearly separated sections: (1) PWA installation steps for Android Chrome (recommended) and (2) developer/testing guidance for building and sideloading the existing Capacitor debug APK, including a note that Internet Identity requires HTTPS for the server URL. Use existing shadcn-ui components (e.g., Card, Button, Alert) for layout/clarity; verify the component's usage instructions before implementing."
+          "path": "frontend/vite.config.ts",
+          "operation": "modify",
+          "description": "Harden build/runtime environment injection to avoid production-only runtime failures (e.g., missing/undefined env values or \"process is not defined\" crashes). Ensure safe defaults/fallbacks are always present for configuration used by the app (notably Internet Identity URL) and add minimal shims via Vite `define` only as needed to prevent startup crashes."
+        },
+        {
+          "path": "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "operation": "modify",
+          "description": "Make service worker registration resilient across deployment base paths and hosting setups by registering using the Vite base URL rather than a hard-coded absolute path, and by exposing a small callback-based API so the app can react to registration failures without breaking startup."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Register and wire a new route (e.g., \"/install-android\") to the new InstallAndroidPage so it is reachable in-app."
-        },
-        {
-          "path": "frontend/src/components/auth/RequireAuth.tsx",
-          "operation": "modify",
-          "description": "Allow unauthenticated access to the new \"/install-android\" route (similar to the existing sign-in route exception) so both unauthenticated and authenticated users can view the install guidance."
-        },
-        {
-          "path": "frontend/src/components/layout/TopNav.tsx",
-          "operation": "modify",
-          "description": "Add a persistent navigation item labeled exactly “Install on Android” that is visible to both unauthenticated and authenticated users (desktop nav + mobile sheet). Use existing shadcn-ui Button/Sheet patterns for nav consistency; verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/routeBackgrounds.ts",
-          "operation": "modify",
-          "description": "Add a route background mapping for \"/install-android\" (reuse an existing generated background already in the project) so the new page fits the existing route-based background system."
+          "description": "Wire the improved service worker registration helper into app startup and ensure failures cannot cause a blank screen (handle registration errors via the new callback and keep the app rendering normally)."
         }
       ]
     },
     {
-      "id": "REQ-65",
-      "summary": "Keep Android APK build documentation accurate for the existing Capacitor wrapper, including .env.capacitor configuration, HTTPS requirement for Internet Identity, and the exact debug APK output path.",
+      "id": "REQ-71",
+      "summary": "Add a visible, English startup/runtime error surface so critical initialization failures are actionable rather than silent.",
       "acceptanceCriteria": [
-        "`frontend/docs/android.md` includes (and keeps) explicit steps to set `CAPACITOR_SERVER_URL` via a `.env.capacitor` file copied from `frontend/.env.capacitor.example`",
-        "The docs explicitly state that the Capacitor server URL must be HTTPS for Internet Identity to work",
-        "The docs explicitly state the debug APK output path: `android/app/build/outputs/apk/debug/app-debug.apk`",
-        "Documentation is clear English and consistent with the current app name “EOATravelDeals”"
+        "When a critical initialization step fails (e.g., service worker registration), an English error message is logged and a visible non-blocking UI message is shown somewhere appropriate (e.g., a toast or alert), rather than failing silently.",
+        "User-facing error text remains in English and does not contain garbled characters."
       ],
       "file_operations": [
         {
-          "path": "frontend/docs/android.md",
-          "operation": "modify",
-          "description": "Audit and update the guide to explicitly reference copying `frontend/.env.capacitor.example` to `frontend/.env.capacitor`, reiterate that `CAPACITOR_SERVER_URL` must be HTTPS for Internet Identity, and clearly call out the debug APK output path `android/app/build/outputs/apk/debug/app-debug.apk` in a dedicated, easy-to-find line/section. Ensure naming is consistently “EOATravelDeals” and text is English."
+          "path": "frontend/src/components/pwa/StartupErrorBanner.tsx",
+          "operation": "create",
+          "description": "Create a small, non-blocking banner/alert component that listens for critical startup/runtime failures (global `error` and `unhandledrejection`) and renders a clear English message while also logging details to the console for diagnostics."
         },
         {
-          "path": "frontend/docs/README.md",
+          "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Ensure the documentation index remains accurate and continues to link users/developers to the correct sections of `android.md` for PWA installation and debug APK build/sideload steps, using consistent “EOATravelDeals” naming."
+          "description": "Render the new StartupErrorBanner in the global layout so critical errors are visible on every route without changing routing behavior."
+        },
+        {
+          "path": "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "operation": "modify",
+          "description": "On service worker registration failure, log a clear English error to the console and invoke the provided failure callback so the UI can display a visible non-blocking message instead of failing silently."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Pass a failure callback into service worker registration that triggers the app-wide error surface (banner state) with an English message (e.g., \"Service worker registration failed. The app may not work offline.\")."
         }
       ]
     }
