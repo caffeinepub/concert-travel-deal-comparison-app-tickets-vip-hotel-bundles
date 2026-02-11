@@ -1,85 +1,80 @@
 {
   "kind": "build_request",
-  "title": "Unique world-landscape background image per page/route",
+  "title": "Make EOATravelDeals installable on Android (PWA + Android wrapper build instructions)",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-58",
-      "text": "Add a per-route background system so each main page shows a different world landscape background image behind the page content (unique background per page the user clicks on). Apply this at the shared layout level (AppLayout) so it works consistently across routes.",
+      "id": "REQ-61",
+      "text": "Add Progressive Web App (PWA) support so EOATravelDeals can be installed on Android devices directly from the browser, including a web app manifest, required icons, and a service worker for basic offline caching.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "recent-messages-5"
         ],
         "quotes": [
-          "I want a different background  for each page you click on  different landscape from around the world"
+          "I want to download it  ass an android app to see how it runs"
         ]
       },
       "acceptanceCriteria": [
-        "Each of these routes renders a distinct background image: /, /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile.",
-        "Nested routes reuse a sensible parent background (unless explicitly overridden): /memory-finder/$albumId uses the Memory Finder background; /groups/$groupId uses the Groups background.",
-        "Backgrounds are visually behind the existing UI (TopNav, page content, Footer) and do not break layout sizing (still full height).",
-        "Backgrounds render responsively (cover/center) without stretching artifacts, and remain performant (no visible jank when navigating)."
+        "The app serves a valid web app manifest at a stable path (e.g., /manifest.webmanifest) and references it from frontend/index.html.",
+        "The manifest uses the current branding values where applicable (name shows as \"EOATravelDeals\") and includes icons suitable for Android installation.",
+        "A service worker is registered in production builds and caches the app shell so the app loads when offline (at minimum: show a clear offline fallback page/message if live API calls fail).",
+        "On Android Chrome, the site is eligible for “Add to Home screen” / install, and launching from the home screen opens as a standalone app (no browser UI chrome)."
       ]
     },
     {
-      "id": "REQ-59",
-      "text": "Ensure foreground content remains readable on top of landscape backgrounds by adding a consistent dark overlay/tint (or equivalent) that preserves the existing dark theme look while still letting the landscape be visible.",
+      "id": "REQ-62",
+      "text": "Create an Android wrapper project for the existing web app (using a WebView-based wrapper such as Capacitor) so a developer can produce a downloadable APK for local testing on Android devices/emulators.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "recent-messages-5"
         ],
         "quotes": [
-          "different landscape from around the world"
+          "I want to download it  ass an android app to see how it runs"
         ]
       },
       "acceptanceCriteria": [
-        "All pages keep sufficient text contrast (headings, body text, buttons, cards) against the background image.",
-        "Cards and surfaces remain visually distinct from the background (no loss of boundaries).",
-        "The overlay/tint approach is consistent across all routes and does not introduce new non-English user-facing text."
+        "A new Android wrapper setup is added to the repository (e.g., an /android directory and necessary wrapper config files) without breaking the existing web build.",
+        "The wrapper points to the production-deployed HTTPS URL by default (not http://localhost) so Internet Identity login can work in the Android app context.",
+        "A single documented command sequence exists to build a debug APK locally (e.g., npm scripts + Android build steps), and these steps are captured in a README section committed to the repo.",
+        "Launching the Android app shows the existing sign-in screen and allows navigating through the app after successful Internet Identity authentication."
       ]
     },
     {
-      "id": "REQ-60",
-      "text": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames (no backend image serving).",
+      "id": "REQ-63",
+      "text": "Add clear, English documentation in the repo describing how to (1) install the PWA on Android and (2) build and install the debug APK onto an Android device/emulator.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "recent-messages-5"
         ],
         "quotes": [
-          "different landscape from around the world"
+          "I want to download it  ass an android app to see how it runs"
         ]
       },
       "acceptanceCriteria": [
-        "All new background image files exist in frontend/public/assets/generated and are referenced via absolute paths like /assets/generated/<filename>.",
-        "No backend changes are required to display backgrounds.",
-        "Build passes and all routes render their intended backgrounds in production mode."
+        "Documentation includes: Android prerequisites, how to run the web build, how to install as PWA, how to build an APK, and how to sideload/install it on a device.",
+        "Documentation includes troubleshooting notes specific to Internet Identity in an Android WebView/PWA context (e.g., requiring HTTPS, pop-up behavior, returning to the app after auth).",
+        "All documentation user-facing text is in English and references the current app name \"EOATravelDeals\"."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files in frontend immutablePaths (e.g., frontend/src/main.tsx, frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/components/ui/*).",
-    "Keep all user-facing text in English.",
-    "Serve backgrounds as static frontend assets (frontend/public/assets/generated); do not route image generation or fetching through the backend."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or any sources under frontend/src/components/ui (compose instead).",
+    "Do not add any non-Internet-Identity authentication providers.",
+    "Do not route image/icon serving through the backend; any new icons/assets must be static under frontend/public/assets/generated."
   ],
   "nonGoals": [
-    "Do not implement dynamic/background rotation based on user location, time, or external APIs.",
-    "Do not add third-party image/CDN dependencies.",
-    "Do not change routes or add new routes solely for backgrounds.",
-    "Do not modify authentication gating behavior (protected routes should remain protected)."
+    "Publishing the app to the Google Play Store or setting up Play Console distribution.",
+    "Building an iOS app package.",
+    "Adding push notifications or real-time socket features as part of the Android packaging work."
   ],
   "imageRequirements": {
     "required": [
-      "World landscape background: alpine mountains at sunrise, wide scenic vista (bg-signin-alps-sunrise.dim_1920x1080.png)",
-      "World landscape background: Tokyo night skyline with neon lights, cinematic wide shot (bg-home-tokyo-night.dim_1920x1080.png)",
-      "World landscape background: Santorini cliffside and Aegean sea, bright daylight (bg-tripbuilder-santorini.dim_1920x1080.png)",
-      "World landscape background: New York City skyline at golden hour, wide panorama (bg-results-nyc-goldenhour.dim_1920x1080.png)",
-      "World landscape background: Sahara desert dunes at sunset with dramatic shadows (bg-saved-sahara-sunset.dim_1920x1080.png)",
-      "World landscape background: Iceland waterfall with mist and basalt cliffs, moody overcast (bg-memoryfinder-iceland-waterfall.dim_1920x1080.png)",
-      "World landscape background: Norwegian fjord with steep green cliffs and calm water, soft daylight (bg-groups-norway-fjord.dim_1920x1080.png)",
-      "World landscape background: Machu Picchu mountains with clouds, early morning atmosphere (bg-profile-machu-picchu.dim_1920x1080.png)"
+      "Android app icon (adaptive-friendly), square (eoa-travel-deals-app-icon.dim_512x512.png)",
+      "Android app icon, square (eoa-travel-deals-app-icon.dim_192x192.png)",
+      "PWA maskable icon, square with safe padding (eoa-travel-deals-app-icon-maskable.dim_512x512.png)"
     ],
     "edits": []
   },

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EOATravelDeals</string>
+    <string name="title_activity_main">EOATravelDeals</string>
+    <string name="package_name">com.eoatraveldeals.app</string>
+    <string name="custom_url_scheme">com.eoatraveldeals.app</string>
+</resources>

@@ -1,0 +1,58 @@
+{
+  "name": "EOATravelDeals",
+  "short_name": "EOATravelDeals",
+  "description": "Smart Concert Travel Savings",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/generated/eoa-travel-deals-app-icon.dim_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/generated/eoa-travel-deals-app-icon.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/generated/eoa-travel-deals-app-icon-maskable.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["travel", "entertainment", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Trip Builder",
+      "short_name": "Build Trip",
+      "description": "Create a new trip comparison",
+      "url": "/trip-builder",
+      "icons": [
+        {
+          "src": "/assets/generated/eoa-travel-deals-app-icon.dim_192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Saved Trips",
+      "short_name": "Saved",
+      "description": "View saved trip comparisons",
+      "url": "/saved",
+      "icons": [
+        {
+          "src": "/assets/generated/eoa-travel-deals-app-icon.dim_192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

@@ -2,11 +2,17 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-per-route-background-system-so-each-main-page-shows-a-different-world-landscape-background-image-behind-the-page-content-unique-background-per-page-the-user-clicks-on-apply-this-at-the-shared-layout-level-applayout-so-it-works-consistently-across-routes",
-      "featureTitle": "Add a per-route background system so each main page shows a different world landscape background image behind the page content (unique background per page the user clicks on). Apply this at the shared layout level (AppLayout) so it works consistently across routes.",
+      "featureId": "feature-add-progressive-web-app-pwa-support-so-eoatraveldeals-can-be-installed-on-android-devices-directly-from-the-browser-including-a-web-app-manifest-required-icons-and-a-service-worker-for-basic-offline-caching",
+      "featureTitle": "Add Progressive Web App (PWA) support so EOATravelDeals can be installed on Android devices directly from the browser, including a web app manifest, required icons, and a service worker for basic offline caching.",
       "files": [
+        "frontend/index.html",
+        "frontend/public/manifest.webmanifest",
+        "frontend/public/offline.html",
+        "frontend/public/sw.js",
+        "frontend/src/App.tsx",
         "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/lib/routeBackgrounds.ts"
+        "frontend/src/components/pwa/OfflineStatusBanner.tsx",
+        "frontend/src/lib/pwa/registerServiceWorker.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,15 +24,26 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-58"
+        "REQ-61"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-foreground-content-remains-readable-on-top-of-landscape-backgrounds-by-adding-a-consistent-dark-overlay-tint-or-equivalent-that-preserves-the-existing-dark-theme-look-while-still-letting-the-landscape-be-visible",
-      "featureTitle": "Ensure foreground content remains readable on top of landscape backgrounds by adding a consistent dark overlay/tint (or equivalent) that preserves the existing dark theme look while still letting the landscape be visible.",
+      "featureId": "feature-create-an-android-wrapper-project-for-the-existing-web-app-using-a-webview-based-wrapper-such-as-capacitor-so-a-developer-can-produce-a-downloadable-apk-for-local-testing-on-android-devices-emulators",
+      "featureTitle": "Create an Android wrapper project for the existing web app (using a WebView-based wrapper such as Capacitor) so a developer can produce a downloadable APK for local testing on Android devices/emulators.",
       "files": [
-        "frontend/src/components/layout/AppLayout.tsx"
+        "frontend/.env.capacitor.example",
+        "frontend/android/.gitignore",
+        "frontend/android/app/build.gradle",
+        "frontend/android/app/src/main/AndroidManifest.xml",
+        "frontend/android/app/src/main/java/com/eoatraveldeals/app/MainActivity.java",
+        "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+        "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+        "frontend/android/app/src/main/res/values/strings.xml",
+        "frontend/android/build.gradle",
+        "frontend/android/gradle.properties",
+        "frontend/android/settings.gradle",
+        "frontend/capacitor.config.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -38,15 +55,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-59"
+        "REQ-62"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-the-new-landscape-background-images-as-static-assets-under-frontend-public-assets-generated-and-wire-the-route-to-background-mapping-to-those-exact-filenames-no-backend-image-serving",
-      "featureTitle": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames (no backend image serving).",
+      "featureId": "feature-add-clear-english-documentation-in-the-repo-describing-how-to-1-install-the-pwa-on-android-and-2-build-and-install-the-debug-apk-onto-an-android-device-emulator",
+      "featureTitle": "Add clear, English documentation in the repo describing how to (1) install the PWA on Android and (2) build and install the debug APK onto an Android device/emulator.",
       "files": [
-        "frontend/src/lib/routeBackgrounds.ts"
+        "frontend/docs/README.md",
+        "frontend/docs/android.md"
       ],
       "components": [
         "authorization@4.0.0",
@@ -58,7 +76,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-60"
+        "REQ-63"
       ],
       "confidence": "high"
     }

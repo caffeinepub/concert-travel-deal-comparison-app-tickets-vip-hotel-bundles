@@ -1,5 +1,6 @@
 import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
+import { useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import SignInPage from './pages/SignInPage';
 import HomePage from './pages/HomePage';
@@ -13,6 +14,7 @@ import GroupDetailPage from './pages/GroupDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import AppLayout from './components/layout/AppLayout';
 import RequireAuth from './components/auth/RequireAuth';
+import { registerServiceWorker } from './lib/pwa/registerServiceWorker';
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -106,6 +108,11 @@ declare module '@tanstack/react-router' {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Register service worker for PWA support
+    registerServiceWorker();
+  }, []);
+
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <RouterProvider router={router} />

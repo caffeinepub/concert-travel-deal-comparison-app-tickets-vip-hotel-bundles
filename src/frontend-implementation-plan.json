@@ -1,104 +1,215 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Per-route world landscape backgrounds with consistent dark overlay",
+  "title": "EOATravelDeals: Android installability via PWA + Capacitor wrapper + docs",
   "requirements": [
     {
-      "id": "REQ-58",
-      "summary": "Implement per-route background selection at the shared AppLayout level, including sensible inheritance for nested routes.",
+      "id": "REQ-61",
+      "summary": "Add PWA support (manifest, icons, service worker) with basic offline caching and a clear offline fallback experience.",
       "acceptanceCriteria": [
-        "Each of these routes renders a distinct background image: /, /home, /trip-builder, /results, /saved, /memory-finder, /groups, /profile.",
-        "Nested routes reuse a sensible parent background (unless explicitly overridden): /memory-finder/$albumId uses the Memory Finder background; /groups/$groupId uses the Groups background.",
-        "Backgrounds are visually behind the existing UI (TopNav, page content, Footer) and do not break layout sizing (still full height).",
-        "Backgrounds render responsively (cover/center) without stretching artifacts, and remain performant (no visible jank when navigating)."
+        "The app serves a valid web app manifest at a stable path (e.g., /manifest.webmanifest) and references it from frontend/index.html.",
+        "The manifest uses the current branding values where applicable (name shows as \"EOATravelDeals\") and includes icons suitable for Android installation.",
+        "A service worker is registered in production builds and caches the app shell so the app loads when offline (at minimum: show a clear offline fallback page/message if live API calls fail).",
+        "On Android Chrome, the site is eligible for “Add to Home screen” / install, and launching from the home screen opens as a standalone app (no browser UI chrome)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/routeBackgrounds.ts",
+          "path": "frontend/public/manifest.webmanifest",
           "operation": "create",
-          "description": "Add a centralized route-to-background mapping utility that resolves the correct background image URL for a given pathname, including nested-route inheritance rules for /memory-finder/* and /groups/*. Also expose a list of all background URLs for optional preloading."
+          "description": "Create a web app manifest for EOATravelDeals (name/short_name, standalone display, start_url/scope, theme/background colors) and reference Android-ready icons at stable static paths under frontend/public/assets/generated/."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Reference the manifest at /manifest.webmanifest and add PWA-related meta tags (including theme-color) so Android Chrome recognizes the installable app."
+        },
+        {
+          "path": "frontend/public/sw.js",
+          "operation": "create",
+          "description": "Add a service worker that performs basic app-shell caching (cache-first for built static assets) and provides an offline fallback for navigations/failed requests (serving /offline.html when appropriate)."
+        },
+        {
+          "path": "frontend/public/offline.html",
+          "operation": "create",
+          "description": "Create a simple offline fallback page that clearly indicates EOATravelDeals is offline and that live data may be unavailable until connection returns."
+        },
+        {
+          "path": "frontend/src/lib/pwa/registerServiceWorker.ts",
+          "operation": "create",
+          "description": "Add a small helper to register the service worker only for production builds and to log/handle registration errors without breaking the app."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire service worker registration into the app lifecycle (e.g., on initial app mount) by calling the new registerServiceWorker helper."
+        },
+        {
+          "path": "frontend/src/components/pwa/OfflineStatusBanner.tsx",
+          "operation": "create",
+          "description": "Add a lightweight banner component that listens to browser online/offline events and shows a clear message when offline (no changes to frontend/src/components/ui; compose with simple markup)."
         },
         {
           "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Apply the per-route background system at the layout level by reading the current pathname from the router state and selecting the mapped background image. Set the chosen background via a CSS variable or equivalent on the layout container so it consistently affects all routes, including nested routes. Add lightweight preloading of the known background images to minimize navigation jank."
+          "description": "Render the OfflineStatusBanner at the layout level so the offline message is visible across routes when connectivity drops."
+        },
+        {
+          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated Android app icon (512x512) as a static asset at the exact required path (do not route through backend)."
+        },
+        {
+          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon.dim_192x192.png",
+          "operation": "create",
+          "description": "Add the generated Android app icon (192x192) as a static asset at the exact required path (do not route through backend)."
+        },
+        {
+          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon-maskable.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated maskable PWA icon (512x512) as a static asset at the exact required path (do not route through backend)."
         }
       ]
     },
     {
-      "id": "REQ-59",
-      "summary": "Add a consistent dark overlay/tint so foreground UI remains readable over landscape backgrounds while preserving the existing dark theme look.",
+      "id": "REQ-62",
+      "summary": "Add a WebView-based Android wrapper project (Capacitor) that loads the production HTTPS URL by default and can build a debug APK for local testing.",
       "acceptanceCriteria": [
-        "All pages keep sufficient text contrast (headings, body text, buttons, cards) against the background image.",
-        "Cards and surfaces remain visually distinct from the background (no loss of boundaries).",
-        "The overlay/tint approach is consistent across all routes and does not introduce new non-English user-facing text."
+        "A new Android wrapper setup is added to the repository (e.g., an /android directory and necessary wrapper config files) without breaking the existing web build.",
+        "The wrapper points to the production-deployed HTTPS URL by default (not http://localhost) so Internet Identity login can work in the Android app context.",
+        "A single documented command sequence exists to build a debug APK locally (e.g., npm scripts + Android build steps), and these steps are captured in a README section committed to the repo.",
+        "Launching the Android app shows the existing sign-in screen and allows navigating through the app after successful Internet Identity authentication."
       ],
       "file_operations": [
         {
-          "path": "frontend/index.css",
-          "operation": "modify",
-          "description": "Add shared CSS for the route background layer and a consistent dark overlay/tint (e.g., via fixed-position pseudo-elements) that sits behind TopNav/page/Footer but above the image, ensuring readable contrast and a consistent dark-theme presentation across all routes."
+          "path": "frontend/capacitor.config.ts",
+          "operation": "create",
+          "description": "Add Capacitor configuration for the EOATravelDeals Android wrapper, with server URL defaulting to a production HTTPS URL (configurable via environment variable for developers) and appropriate Android WebView settings."
         },
         {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Update the layout structure/classes to ensure the background image layer and overlay are behind all existing UI, maintain full-height sizing, and avoid interfering with sticky TopNav/backdrop blur. Ensure the foreground content is positioned above the overlay for consistent readability."
+          "path": "frontend/android/.gitignore",
+          "operation": "create",
+          "description": "Add Android wrapper .gitignore suited for Gradle/Android Studio artifacts while keeping the committed wrapper project intact."
+        },
+        {
+          "path": "frontend/android/gradle.properties",
+          "operation": "create",
+          "description": "Add baseline Gradle properties needed for a debug build of the wrapper project."
+        },
+        {
+          "path": "frontend/android/build.gradle",
+          "operation": "create",
+          "description": "Add the top-level Gradle build configuration for the committed Android wrapper project."
+        },
+        {
+          "path": "frontend/android/settings.gradle",
+          "operation": "create",
+          "description": "Add settings to include the Android app module for the wrapper project."
+        },
+        {
+          "path": "frontend/android/app/build.gradle",
+          "operation": "create",
+          "description": "Add the Android app module Gradle configuration (debug build enabled) for the Capacitor-based wrapper."
+        },
+        {
+          "path": "frontend/android/app/src/main/AndroidManifest.xml",
+          "operation": "create",
+          "description": "Create the Android manifest for the wrapper app with appropriate permissions and WebView activity setup compatible with Internet Identity flows over HTTPS."
+        },
+        {
+          "path": "frontend/android/app/src/main/java/com/eoatraveldeals/app/MainActivity.java",
+          "operation": "create",
+          "description": "Add the wrapper MainActivity (Capacitor/Bridge activity) to load the configured production HTTPS URL."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/values/strings.xml",
+          "operation": "create",
+          "description": "Add Android resources including the app name displayed on device as \"EOATravelDeals\"."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+          "operation": "create",
+          "description": "Add adaptive launcher icon resource configuration wired to the provided generated icons bundled with the wrapper."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+          "operation": "create",
+          "description": "Add round launcher icon resource configuration for Android launchers that prefer round icons."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+          "operation": "create",
+          "description": "Add launcher icon asset for hdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+          "operation": "create",
+          "description": "Add launcher icon asset for mdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+          "operation": "create",
+          "description": "Add launcher icon asset for xhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+          "operation": "create",
+          "description": "Add launcher icon asset for xxhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+          "operation": "create",
+          "description": "Add launcher icon asset for xxxhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+          "operation": "create",
+          "description": "Add round launcher icon asset for hdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+          "operation": "create",
+          "description": "Add round launcher icon asset for mdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+          "operation": "create",
+          "description": "Add round launcher icon asset for xhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+          "operation": "create",
+          "description": "Add round launcher icon asset for xxhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+          "operation": "create",
+          "description": "Add round launcher icon asset for xxxhdpi density (derived from the provided generated icons)."
+        },
+        {
+          "path": "frontend/.env.capacitor.example",
+          "operation": "create",
+          "description": "Add an example env file documenting how developers can set the production HTTPS URL used by the wrapper (e.g., CAPACITOR_SERVER_URL) without using http://localhost."
         }
       ]
     },
     {
-      "id": "REQ-60",
-      "summary": "Add required landscape background images as static assets under frontend/public/assets/generated and reference them by exact filenames from the route mapping.",
+      "id": "REQ-63",
+      "summary": "Add English documentation for Android PWA installation and for building/sideloading a debug APK, including Internet Identity troubleshooting notes.",
       "acceptanceCriteria": [
-        "All new background image files exist in frontend/public/assets/generated and are referenced via absolute paths like /assets/generated/<filename>.",
-        "No backend changes are required to display backgrounds.",
-        "Build passes and all routes render their intended backgrounds in production mode."
+        "Documentation includes: Android prerequisites, how to run the web build, how to install as PWA, how to build an APK, and how to sideload/install it on a device.",
+        "Documentation includes troubleshooting notes specific to Internet Identity in an Android WebView/PWA context (e.g., requiring HTTPS, pop-up behavior, returning to the app after auth).",
+        "All documentation user-facing text is in English and references the current app name \"EOATravelDeals\"."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png",
+          "path": "frontend/docs/android.md",
           "operation": "create",
-          "description": "Add the static background asset for the / route (sign-in): frontend/public/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png."
+          "description": "Create English documentation covering (1) installing EOATravelDeals as a PWA on Android and (2) building and installing a debug APK via the committed Capacitor Android wrapper, including prerequisites, command sequence, sideload steps, and Internet Identity troubleshooting (HTTPS requirement, WebView behavior, and returning after auth)."
         },
         {
-          "path": "frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png",
+          "path": "frontend/docs/README.md",
           "operation": "create",
-          "description": "Add the static background asset for the /home route: frontend/public/assets/generated/bg-home-tokyo-night.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /trip-builder route: frontend/public/assets/generated/bg-tripbuilder-santorini.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /results route: frontend/public/assets/generated/bg-results-nyc-goldenhour.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /saved route: frontend/public/assets/generated/bg-saved-sahara-sunset.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /memory-finder and /memory-finder/$albumId routes: frontend/public/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /groups and /groups/$groupId routes: frontend/public/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png",
-          "operation": "create",
-          "description": "Add the static background asset for the /profile route: frontend/public/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png."
-        },
-        {
-          "path": "frontend/src/lib/routeBackgrounds.ts",
-          "operation": "modify",
-          "description": "Wire the route-to-background mapping to reference the exact static asset filenames via absolute paths (e.g., /assets/generated/bg-home-tokyo-night.dim_1920x1080.png) with no backend involvement."
+          "description": "Add a small docs index linking to android.md so developers can easily discover the Android/PWA instructions within the repo."
         }
       ]
     }

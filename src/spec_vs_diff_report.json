@@ -1,40 +1,54 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T23:54:45.469Z",
-  "summary": "Implemented a per-route background system via a centralized route→asset mapping and applied it in AppLayout with fixed full-screen background + consistent dark overlay; however, the diff summary does not show the required background image files being added under frontend/public/assets/generated.",
+  "generatedAt": "2026-02-11T00:12:37.849Z",
+  "summary": "Diff adds PWA support (manifest, service worker, offline fallback, registration, UI offline banner) and a Capacitor-style Android wrapper project plus Android build documentation. One key gap is that the required icon image files themselves are not shown as added. Additionally, some Android build configuration appears to include optional Google Services scaffolding which was not requested.",
   "missing_requirements": [
     {
-      "id": "REQ-60",
-      "requirement": "Add the new landscape background images as static assets under frontend/public/assets/generated and wire the route-to-background mapping to those exact filenames.",
-      "reason": "The mapping references the required filenames, but the diff summary does not include any added files under frontend/public/assets/generated, so existence of the required static assets cannot be confirmed from the provided changes.",
+      "id": "REQ-61",
+      "requirement": "Include the required PWA/Android install icons as static assets under frontend/public/assets/generated (512x512, 192x192, and 512x512 maskable).",
+      "reason": "The manifest and service worker reference the required PNG files under /assets/generated, but the diff summary does not show these image files being added to the repository.",
       "evidence": [
-        "frontend/src/lib/routeBackgrounds.ts"
+        "frontend/public/manifest.webmanifest",
+        "frontend/public/sw.js"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Preloading all background images on initial mount using new Image() for each mapped background.",
-      "reason": "BuildRequest/ACs require performance (no visible jank) but do not explicitly request eager preloading of all backgrounds; this is an additional implementation detail beyond stated requirements.",
+      "description": "Google Services / google-services.json conditional configuration in the Android wrapper (push-notifications-related scaffolding).",
+      "reason": "The BuildRequest explicitly lists push notifications as a non-goal, but the Android Gradle files include the Google Services classpath and conditional plugin application with messaging about push notifications.",
       "evidence": [
-        "frontend/src/components/layout/AppLayout.tsx"
-      ]
-    },
-    {
-      "description": "Added a CSS transition on background-image for route changes.",
-      "reason": "Not explicitly requested in the BuildRequest; it is an extra visual behavior.",
-      "evidence": [
-        "frontend/src/index.css"
+        "frontend/android/build.gradle",
+        "frontend/android/app/build.gradle"
       ]
     }
   ],
   "confidence": 0.72,
   "changed_files": [
     "frontend-file-summaries.txt",
+    "frontend/.env.capacitor.example",
+    "frontend/android/.gitignore",
+    "frontend/android/app/build.gradle",
+    "frontend/android/app/src/main/AndroidManifest.xml",
+    "frontend/android/app/src/main/java/com/eoatraveldeals/app/MainActivity.java",
+    "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+    "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+    "frontend/android/app/src/main/res/values/strings.xml",
+    "frontend/android/build.gradle",
+    "frontend/android/gradle.properties",
+    "frontend/android/settings.gradle",
+    "frontend/capacitor.config.ts",
+    "frontend/docs/README.md",
+    "frontend/docs/android.md",
+    "frontend/index.html",
+    "frontend/public/manifest.webmanifest",
+    "frontend/public/offline.html",
+    "frontend/public/sw.js",
+    "frontend/src/App.tsx",
     "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/index.css",
-    "frontend/src/lib/routeBackgrounds.ts",
+    "frontend/src/components/pwa/OfflineStatusBanner.tsx",
+    "frontend/src/lib/pwa/registerServiceWorker.ts",
     "project_state.json"
   ]
 }
