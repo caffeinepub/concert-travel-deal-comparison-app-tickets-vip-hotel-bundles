@@ -16,6 +16,7 @@ const routeBackgrounds: RouteBackgroundMap = {
   '/memory-finder': '/assets/generated/bg-memoryfinder-iceland-waterfall.dim_1920x1080.png',
   '/groups': '/assets/generated/bg-groups-norway-fjord.dim_1920x1080.png',
   '/profile': '/assets/generated/bg-profile-machu-picchu.dim_1920x1080.png',
+  '/install-android': '/assets/generated/bg-signin-alps-sunrise.dim_1920x1080.png',
 };
 
 /**

@@ -1,54 +1,35 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T00:12:37.849Z",
-  "summary": "Diff adds PWA support (manifest, service worker, offline fallback, registration, UI offline banner) and a Capacitor-style Android wrapper project plus Android build documentation. One key gap is that the required icon image files themselves are not shown as added. Additionally, some Android build configuration appears to include optional Google Services scaffolding which was not requested.",
-  "missing_requirements": [
-    {
-      "id": "REQ-61",
-      "requirement": "Include the required PWA/Android install icons as static assets under frontend/public/assets/generated (512x512, 192x192, and 512x512 maskable).",
-      "reason": "The manifest and service worker reference the required PNG files under /assets/generated, but the diff summary does not show these image files being added to the repository.",
-      "evidence": [
-        "frontend/public/manifest.webmanifest",
-        "frontend/public/sw.js"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-11T01:33:23.620Z",
+  "summary": "REQ-64 and REQ-65 appear implemented via a new public “Install on Android” in-app entry point (/install-android) with PWA + APK guidance, and updated Android build documentation including CAPACITOR_SERVER_URL/.env.capacitor, HTTPS requirement for Internet Identity, and the debug APK output path. Some additional changes (e.g., service worker registration) were introduced beyond the explicit request.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Google Services / google-services.json conditional configuration in the Android wrapper (push-notifications-related scaffolding).",
-      "reason": "The BuildRequest explicitly lists push notifications as a non-goal, but the Android Gradle files include the Google Services classpath and conditional plugin application with messaging about push notifications.",
+      "description": "Automatic service worker registration for PWA support added at app startup (beyond just adding install guidance).",
+      "reason": "BuildRequest focuses on an in-app install entry point and documentation for APK/PWA instructions; it does not request implementation changes to enable PWA/service worker behavior.",
       "evidence": [
-        "frontend/android/build.gradle",
-        "frontend/android/app/build.gradle"
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "description": "Repository documentation index page added/updated (docs README) beyond the specific requirement to update frontend/docs/android.md.",
+      "reason": "REQ-65 only specifies keeping frontend/docs/android.md accurate; adding/modifying frontend/docs/README.md is not explicitly requested.",
+      "evidence": [
+        "frontend/docs/README.md"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.78,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/.env.capacitor.example",
-    "frontend/android/.gitignore",
-    "frontend/android/app/build.gradle",
-    "frontend/android/app/src/main/AndroidManifest.xml",
-    "frontend/android/app/src/main/java/com/eoatraveldeals/app/MainActivity.java",
-    "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-    "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-    "frontend/android/app/src/main/res/values/strings.xml",
-    "frontend/android/build.gradle",
-    "frontend/android/gradle.properties",
-    "frontend/android/settings.gradle",
-    "frontend/capacitor.config.ts",
     "frontend/docs/README.md",
     "frontend/docs/android.md",
-    "frontend/index.html",
-    "frontend/public/manifest.webmanifest",
-    "frontend/public/offline.html",
-    "frontend/public/sw.js",
     "frontend/src/App.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/pwa/OfflineStatusBanner.tsx",
-    "frontend/src/lib/pwa/registerServiceWorker.ts",
+    "frontend/src/components/auth/RequireAuth.tsx",
+    "frontend/src/components/layout/TopNav.tsx",
+    "frontend/src/lib/routeBackgrounds.ts",
+    "frontend/src/pages/InstallAndroidPage.tsx",
     "project_state.json"
   ]
 }

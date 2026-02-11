@@ -80,12 +80,12 @@ This guide covers two ways to run EOATravelDeals on Android devices:
    ```
 
 2. **Configure the production URL**
-   - Copy `.env.capacitor.example` to `.env.capacitor`
-   - Edit `.env.capacitor` and set your production HTTPS URL:
+   - Copy `frontend/.env.capacitor.example` to `frontend/.env.capacitor`
+   - Edit `frontend/.env.capacitor` and set your production HTTPS URL:
      ```
      CAPACITOR_SERVER_URL=https://your-canister-id.ic0.app
      ```
-   - **Important**: Must be HTTPS for Internet Identity authentication to work
+   - **Important**: The `CAPACITOR_SERVER_URL` must be HTTPS for Internet Identity authentication to work. HTTP or localhost will not work.
 
 3. **Build the web app**
    ```bash
@@ -109,7 +109,7 @@ This guide covers two ways to run EOATravelDeals on Android devices:
      cd android
      ./gradlew assembleDebug
      ```
-   - The APK will be at: `android/app/build/outputs/apk/debug/app-debug.apk`
+   - **The debug APK output path is:** `android/app/build/outputs/apk/debug/app-debug.apk`
 
 ### Installing the APK
 
@@ -136,7 +136,7 @@ This guide covers two ways to run EOATravelDeals on Android devices:
 - Check that Android SDK Platform 34 is installed
 
 **App crashes on launch:**
-- Verify `CAPACITOR_SERVER_URL` is set to a valid HTTPS URL
+- Verify `CAPACITOR_SERVER_URL` in `.env.capacitor` is set to a valid HTTPS URL
 - Check Android Logcat in Android Studio for error messages
 - Ensure the production URL is accessible from your device
 

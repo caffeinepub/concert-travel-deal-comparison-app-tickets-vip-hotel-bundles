@@ -12,6 +12,7 @@ import AlbumPage from './pages/AlbumPage';
 import GroupsPage from './pages/GroupsPage';
 import GroupDetailPage from './pages/GroupDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import InstallAndroidPage from './pages/InstallAndroidPage';
 import AppLayout from './components/layout/AppLayout';
 import RequireAuth from './components/auth/RequireAuth';
 import { registerServiceWorker } from './lib/pwa/registerServiceWorker';
@@ -86,6 +87,12 @@ const profileRoute = createRoute({
   component: ProfilePage,
 });
 
+const installAndroidRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/install-android',
+  component: InstallAndroidPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   homeRoute,
@@ -97,6 +104,7 @@ const routeTree = rootRoute.addChildren([
   groupsRoute,
   groupDetailRoute,
   profileRoute,
+  installAndroidRoute,
 ]);
 
 const router = createRouter({ routeTree });

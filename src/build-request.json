@@ -1,81 +1,59 @@
 {
   "kind": "build_request",
-  "title": "Make EOATravelDeals installable on Android (PWA + Android wrapper build instructions)",
+  "title": "Provide a downloadable Android app experience (APK + install guidance) for EOATravelDeals",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-61",
-      "text": "Add Progressive Web App (PWA) support so EOATravelDeals can be installed on Android devices directly from the browser, including a web app manifest, required icons, and a service worker for basic offline caching.",
+      "id": "REQ-64",
+      "text": "Add a clear in-app entry point that explains how to install EOATravelDeals on a phone as a downloadable app, offering both (1) PWA installation from Android Chrome and (2) a developer/testing option to install a sideloaded debug APK built from the existing Capacitor Android wrapper.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-5"
+          "msg-5"
         ],
         "quotes": [
-          "I want to download it  ass an android app to see how it runs"
+          "I don't want to app web page I want to downloadable app that you can download onto your phone and use"
         ]
       },
       "acceptanceCriteria": [
-        "The app serves a valid web app manifest at a stable path (e.g., /manifest.webmanifest) and references it from frontend/index.html.",
-        "The manifest uses the current branding values where applicable (name shows as \"EOATravelDeals\") and includes icons suitable for Android installation.",
-        "A service worker is registered in production builds and caches the app shell so the app loads when offline (at minimum: show a clear offline fallback page/message if live API calls fail).",
-        "On Android Chrome, the site is eligible for “Add to Home screen” / install, and launching from the home screen opens as a standalone app (no browser UI chrome)."
+        "Unauthenticated and authenticated users can find an in-app link or section labeled in clear English (e.g., “Install on Android”)",
+        "The in-app instructions include both paths: “Install as an app (recommended)” via PWA and “Downloadable APK (developer/testing)” via Capacitor build",
+        "The in-app instructions do not mention any non-Internet-Identity sign-in methods (no Google/Instagram/email auth references)",
+        "All user-facing text added/modified for this entry point is in English"
       ]
     },
     {
-      "id": "REQ-62",
-      "text": "Create an Android wrapper project for the existing web app (using a WebView-based wrapper such as Capacitor) so a developer can produce a downloadable APK for local testing on Android devices/emulators.",
+      "id": "REQ-65",
+      "text": "Ensure the repository documentation remains accurate and complete for producing a downloadable Android APK from the existing Capacitor wrapper, including the required environment variable configuration and the exact APK output path.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-5"
+          "msg-5"
         ],
         "quotes": [
-          "I want to download it  ass an android app to see how it runs"
+          "I don't want to app web page I want to downloadable app that you can download onto your phone and use"
         ]
       },
       "acceptanceCriteria": [
-        "A new Android wrapper setup is added to the repository (e.g., an /android directory and necessary wrapper config files) without breaking the existing web build.",
-        "The wrapper points to the production-deployed HTTPS URL by default (not http://localhost) so Internet Identity login can work in the Android app context.",
-        "A single documented command sequence exists to build a debug APK locally (e.g., npm scripts + Android build steps), and these steps are captured in a README section committed to the repo.",
-        "Launching the Android app shows the existing sign-in screen and allows navigating through the app after successful Internet Identity authentication."
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "text": "Add clear, English documentation in the repo describing how to (1) install the PWA on Android and (2) build and install the debug APK onto an Android device/emulator.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-5"
-        ],
-        "quotes": [
-          "I want to download it  ass an android app to see how it runs"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Documentation includes: Android prerequisites, how to run the web build, how to install as PWA, how to build an APK, and how to sideload/install it on a device.",
-        "Documentation includes troubleshooting notes specific to Internet Identity in an Android WebView/PWA context (e.g., requiring HTTPS, pop-up behavior, returning to the app after auth).",
-        "All documentation user-facing text is in English and references the current app name \"EOATravelDeals\"."
+        "`frontend/docs/android.md` includes (and keeps) explicit steps to set `CAPACITOR_SERVER_URL` via a `.env.capacitor` file copied from `frontend/.env.capacitor.example`",
+        "The docs explicitly state that the Capacitor server URL must be HTTPS for Internet Identity to work",
+        "The docs explicitly state the debug APK output path: `android/app/build/outputs/apk/debug/app-debug.apk`",
+        "Documentation is clear English and consistent with the current app name “EOATravelDeals”"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or any sources under frontend/src/components/ui (compose instead).",
-    "Do not add any non-Internet-Identity authentication providers.",
-    "Do not route image/icon serving through the backend; any new icons/assets must be static under frontend/public/assets/generated."
+    "Do not add or rely on any authentication provider other than Internet Identity.",
+    "Do not edit files under frontend/src/components/ui or any other paths listed as immutable in SYSTEM_CONTEXT.",
+    "Do not introduce any external backend services or databases; keep the existing Internet Computer canister architecture unchanged."
   ],
   "nonGoals": [
-    "Publishing the app to the Google Play Store or setting up Play Console distribution.",
-    "Building an iOS app package.",
-    "Adding push notifications or real-time socket features as part of the Android packaging work."
+    "Publishing to the Google Play Store (AAB signing, Play Console setup, store listing)",
+    "Building an iOS native wrapper/app",
+    "Adding push notifications or real-time socket features"
   ],
   "imageRequirements": {
-    "required": [
-      "Android app icon (adaptive-friendly), square (eoa-travel-deals-app-icon.dim_512x512.png)",
-      "Android app icon, square (eoa-travel-deals-app-icon.dim_192x192.png)",
-      "PWA maskable icon, square with safe padding (eoa-travel-deals-app-icon-maskable.dim_512x512.png)"
-    ],
+    "required": [],
     "edits": []
   },
   "userProfileUpdate": {

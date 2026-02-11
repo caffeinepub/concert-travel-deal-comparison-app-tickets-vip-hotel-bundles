@@ -13,10 +13,11 @@ export default function RequireAuth({ children }: RequireAuthProps) {
   
   const currentPath = routerState.location.pathname;
   const isSignInPage = currentPath === '/';
+  const isInstallAndroidPage = currentPath === '/install-android';
   
   useEffect(() => {
-    // Don't redirect if we're still initializing or already on sign-in page
-    if (isInitializing || isSignInPage) {
+    // Don't redirect if we're still initializing or on public pages
+    if (isInitializing || isSignInPage || isInstallAndroidPage) {
       return;
     }
     
@@ -24,10 +25,10 @@ export default function RequireAuth({ children }: RequireAuthProps) {
     if (!identity) {
       navigate({ to: '/' });
     }
-  }, [identity, isInitializing, isSignInPage, navigate]);
+  }, [identity, isInitializing, isSignInPage, isInstallAndroidPage, navigate]);
   
-  // Allow sign-in page to render always
-  if (isSignInPage) {
+  // Allow public pages to render always
+  if (isSignInPage || isInstallAndroidPage) {
     return <>{children}</>;
   }
   

@@ -1,215 +1,64 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "EOATravelDeals: Android installability via PWA + Capacitor wrapper + docs",
+  "title": "Android install entry point + accurate Capacitor APK documentation for EOATravelDeals",
   "requirements": [
     {
-      "id": "REQ-61",
-      "summary": "Add PWA support (manifest, icons, service worker) with basic offline caching and a clear offline fallback experience.",
+      "id": "REQ-64",
+      "summary": "Add an in-app “Install on Android” entry point with English instructions for PWA install (recommended) and a debug APK sideload option via the existing Capacitor Android wrapper.",
       "acceptanceCriteria": [
-        "The app serves a valid web app manifest at a stable path (e.g., /manifest.webmanifest) and references it from frontend/index.html.",
-        "The manifest uses the current branding values where applicable (name shows as \"EOATravelDeals\") and includes icons suitable for Android installation.",
-        "A service worker is registered in production builds and caches the app shell so the app loads when offline (at minimum: show a clear offline fallback page/message if live API calls fail).",
-        "On Android Chrome, the site is eligible for “Add to Home screen” / install, and launching from the home screen opens as a standalone app (no browser UI chrome)."
+        "Unauthenticated and authenticated users can find an in-app link or section labeled in clear English (e.g., “Install on Android”)",
+        "The in-app instructions include both paths: “Install as an app (recommended)” via PWA and “Downloadable APK (developer/testing)” via Capacitor build",
+        "The in-app instructions do not mention any non-Internet-Identity sign-in methods (no Google/Instagram/email auth references)",
+        "All user-facing text added/modified for this entry point is in English"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/manifest.webmanifest",
+          "path": "frontend/src/pages/InstallAndroidPage.tsx",
           "operation": "create",
-          "description": "Create a web app manifest for EOATravelDeals (name/short_name, standalone display, start_url/scope, theme/background colors) and reference Android-ready icons at stable static paths under frontend/public/assets/generated/."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Reference the manifest at /manifest.webmanifest and add PWA-related meta tags (including theme-color) so Android Chrome recognizes the installable app."
-        },
-        {
-          "path": "frontend/public/sw.js",
-          "operation": "create",
-          "description": "Add a service worker that performs basic app-shell caching (cache-first for built static assets) and provides an offline fallback for navigations/failed requests (serving /offline.html when appropriate)."
-        },
-        {
-          "path": "frontend/public/offline.html",
-          "operation": "create",
-          "description": "Create a simple offline fallback page that clearly indicates EOATravelDeals is offline and that live data may be unavailable until connection returns."
-        },
-        {
-          "path": "frontend/src/lib/pwa/registerServiceWorker.ts",
-          "operation": "create",
-          "description": "Add a small helper to register the service worker only for production builds and to log/handle registration errors without breaking the app."
+          "description": "Create an “Install on Android” page that presents two clearly separated sections: (1) PWA installation steps for Android Chrome (recommended) and (2) developer/testing guidance for building and sideloading the existing Capacitor debug APK, including a note that Internet Identity requires HTTPS for the server URL. Use existing shadcn-ui components (e.g., Card, Button, Alert) for layout/clarity; verify the component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire service worker registration into the app lifecycle (e.g., on initial app mount) by calling the new registerServiceWorker helper."
+          "description": "Register and wire a new route (e.g., \"/install-android\") to the new InstallAndroidPage so it is reachable in-app."
         },
         {
-          "path": "frontend/src/components/pwa/OfflineStatusBanner.tsx",
-          "operation": "create",
-          "description": "Add a lightweight banner component that listens to browser online/offline events and shows a clear message when offline (no changes to frontend/src/components/ui; compose with simple markup)."
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "path": "frontend/src/components/auth/RequireAuth.tsx",
           "operation": "modify",
-          "description": "Render the OfflineStatusBanner at the layout level so the offline message is visible across routes when connectivity drops."
+          "description": "Allow unauthenticated access to the new \"/install-android\" route (similar to the existing sign-in route exception) so both unauthenticated and authenticated users can view the install guidance."
         },
         {
-          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon.dim_512x512.png",
-          "operation": "create",
-          "description": "Add the generated Android app icon (512x512) as a static asset at the exact required path (do not route through backend)."
+          "path": "frontend/src/components/layout/TopNav.tsx",
+          "operation": "modify",
+          "description": "Add a persistent navigation item labeled exactly “Install on Android” that is visible to both unauthenticated and authenticated users (desktop nav + mobile sheet). Use existing shadcn-ui Button/Sheet patterns for nav consistency; verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon.dim_192x192.png",
-          "operation": "create",
-          "description": "Add the generated Android app icon (192x192) as a static asset at the exact required path (do not route through backend)."
-        },
-        {
-          "path": "frontend/public/assets/generated/eoa-travel-deals-app-icon-maskable.dim_512x512.png",
-          "operation": "create",
-          "description": "Add the generated maskable PWA icon (512x512) as a static asset at the exact required path (do not route through backend)."
+          "path": "frontend/src/lib/routeBackgrounds.ts",
+          "operation": "modify",
+          "description": "Add a route background mapping for \"/install-android\" (reuse an existing generated background already in the project) so the new page fits the existing route-based background system."
         }
       ]
     },
     {
-      "id": "REQ-62",
-      "summary": "Add a WebView-based Android wrapper project (Capacitor) that loads the production HTTPS URL by default and can build a debug APK for local testing.",
+      "id": "REQ-65",
+      "summary": "Keep Android APK build documentation accurate for the existing Capacitor wrapper, including .env.capacitor configuration, HTTPS requirement for Internet Identity, and the exact debug APK output path.",
       "acceptanceCriteria": [
-        "A new Android wrapper setup is added to the repository (e.g., an /android directory and necessary wrapper config files) without breaking the existing web build.",
-        "The wrapper points to the production-deployed HTTPS URL by default (not http://localhost) so Internet Identity login can work in the Android app context.",
-        "A single documented command sequence exists to build a debug APK locally (e.g., npm scripts + Android build steps), and these steps are captured in a README section committed to the repo.",
-        "Launching the Android app shows the existing sign-in screen and allows navigating through the app after successful Internet Identity authentication."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/capacitor.config.ts",
-          "operation": "create",
-          "description": "Add Capacitor configuration for the EOATravelDeals Android wrapper, with server URL defaulting to a production HTTPS URL (configurable via environment variable for developers) and appropriate Android WebView settings."
-        },
-        {
-          "path": "frontend/android/.gitignore",
-          "operation": "create",
-          "description": "Add Android wrapper .gitignore suited for Gradle/Android Studio artifacts while keeping the committed wrapper project intact."
-        },
-        {
-          "path": "frontend/android/gradle.properties",
-          "operation": "create",
-          "description": "Add baseline Gradle properties needed for a debug build of the wrapper project."
-        },
-        {
-          "path": "frontend/android/build.gradle",
-          "operation": "create",
-          "description": "Add the top-level Gradle build configuration for the committed Android wrapper project."
-        },
-        {
-          "path": "frontend/android/settings.gradle",
-          "operation": "create",
-          "description": "Add settings to include the Android app module for the wrapper project."
-        },
-        {
-          "path": "frontend/android/app/build.gradle",
-          "operation": "create",
-          "description": "Add the Android app module Gradle configuration (debug build enabled) for the Capacitor-based wrapper."
-        },
-        {
-          "path": "frontend/android/app/src/main/AndroidManifest.xml",
-          "operation": "create",
-          "description": "Create the Android manifest for the wrapper app with appropriate permissions and WebView activity setup compatible with Internet Identity flows over HTTPS."
-        },
-        {
-          "path": "frontend/android/app/src/main/java/com/eoatraveldeals/app/MainActivity.java",
-          "operation": "create",
-          "description": "Add the wrapper MainActivity (Capacitor/Bridge activity) to load the configured production HTTPS URL."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/values/strings.xml",
-          "operation": "create",
-          "description": "Add Android resources including the app name displayed on device as \"EOATravelDeals\"."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-          "operation": "create",
-          "description": "Add adaptive launcher icon resource configuration wired to the provided generated icons bundled with the wrapper."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-          "operation": "create",
-          "description": "Add round launcher icon resource configuration for Android launchers that prefer round icons."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
-          "operation": "create",
-          "description": "Add launcher icon asset for hdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
-          "operation": "create",
-          "description": "Add launcher icon asset for mdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
-          "operation": "create",
-          "description": "Add launcher icon asset for xhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
-          "operation": "create",
-          "description": "Add launcher icon asset for xxhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
-          "operation": "create",
-          "description": "Add launcher icon asset for xxxhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
-          "operation": "create",
-          "description": "Add round launcher icon asset for hdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
-          "operation": "create",
-          "description": "Add round launcher icon asset for mdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
-          "operation": "create",
-          "description": "Add round launcher icon asset for xhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
-          "operation": "create",
-          "description": "Add round launcher icon asset for xxhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
-          "operation": "create",
-          "description": "Add round launcher icon asset for xxxhdpi density (derived from the provided generated icons)."
-        },
-        {
-          "path": "frontend/.env.capacitor.example",
-          "operation": "create",
-          "description": "Add an example env file documenting how developers can set the production HTTPS URL used by the wrapper (e.g., CAPACITOR_SERVER_URL) without using http://localhost."
-        }
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "summary": "Add English documentation for Android PWA installation and for building/sideloading a debug APK, including Internet Identity troubleshooting notes.",
-      "acceptanceCriteria": [
-        "Documentation includes: Android prerequisites, how to run the web build, how to install as PWA, how to build an APK, and how to sideload/install it on a device.",
-        "Documentation includes troubleshooting notes specific to Internet Identity in an Android WebView/PWA context (e.g., requiring HTTPS, pop-up behavior, returning to the app after auth).",
-        "All documentation user-facing text is in English and references the current app name \"EOATravelDeals\"."
+        "`frontend/docs/android.md` includes (and keeps) explicit steps to set `CAPACITOR_SERVER_URL` via a `.env.capacitor` file copied from `frontend/.env.capacitor.example`",
+        "The docs explicitly state that the Capacitor server URL must be HTTPS for Internet Identity to work",
+        "The docs explicitly state the debug APK output path: `android/app/build/outputs/apk/debug/app-debug.apk`",
+        "Documentation is clear English and consistent with the current app name “EOATravelDeals”"
       ],
       "file_operations": [
         {
           "path": "frontend/docs/android.md",
-          "operation": "create",
-          "description": "Create English documentation covering (1) installing EOATravelDeals as a PWA on Android and (2) building and installing a debug APK via the committed Capacitor Android wrapper, including prerequisites, command sequence, sideload steps, and Internet Identity troubleshooting (HTTPS requirement, WebView behavior, and returning after auth)."
+          "operation": "modify",
+          "description": "Audit and update the guide to explicitly reference copying `frontend/.env.capacitor.example` to `frontend/.env.capacitor`, reiterate that `CAPACITOR_SERVER_URL` must be HTTPS for Internet Identity, and clearly call out the debug APK output path `android/app/build/outputs/apk/debug/app-debug.apk` in a dedicated, easy-to-find line/section. Ensure naming is consistently “EOATravelDeals” and text is English."
         },
         {
           "path": "frontend/docs/README.md",
-          "operation": "create",
-          "description": "Add a small docs index linking to android.md so developers can easily discover the Android/PWA instructions within the repo."
+          "operation": "modify",
+          "description": "Ensure the documentation index remains accurate and continues to link users/developers to the correct sections of `android.md` for PWA installation and debug APK build/sideload steps, using consistent “EOATravelDeals” naming."
         }
       ]
     }

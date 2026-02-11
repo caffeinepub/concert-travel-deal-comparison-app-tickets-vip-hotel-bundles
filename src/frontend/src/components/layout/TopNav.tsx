@@ -2,11 +2,18 @@ import { useState } from 'react';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User } from 'lucide-react';
+import { Menu, User, Smartphone } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 import LoginButton from '@/components/auth/LoginButton';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from '@/hooks/useQueries';
 import { branding } from '@/config/branding';
+
+interface NavItem {
+  path: string;
+  label: string;
+  icon?: LucideIcon;
+}
 
 export default function TopNav() {
   const navigate = useNavigate();
@@ -18,15 +25,19 @@ export default function TopNav() {
   const isActive = (path: string) => routerState.location.pathname === path;
   const isAuthenticated = !!identity;
 
-  // Define nav items based on auth state
-  const navItems = isAuthenticated
-    ? [
-        { path: '/trip-builder', label: 'RouteRally' },
-        { path: '/saved', label: 'CostCompass' },
-        { path: '/memory-finder', label: 'EchoPass' },
-        { path: '/groups', label: 'NovaTrips' },
-      ]
-    : [];
+  // Define nav items - Install on Android is always visible
+  const authNavItems: NavItem[] = [
+    { path: '/trip-builder', label: 'RouteRally' },
+    { path: '/saved', label: 'CostCompass' },
+    { path: '/memory-finder', label: 'EchoPass' },
+    { path: '/groups', label: 'NovaTrips' },
+  ];
+
+  const publicNavItems: NavItem[] = [
+    { path: '/install-android', label: 'Install on Android', icon: Smartphone },
+  ];
+
+  const navItems: NavItem[] = isAuthenticated ? [...authNavItems, ...publicNavItems] : publicNavItems;
 
   const handleNavigate = (path: string) => {
     navigate({ to: path });
@@ -58,7 +69,9 @@ export default function TopNav() {
                   key={item.path}
                   variant={isActive(item.path) ? 'secondary' : 'ghost'}
                   onClick={() => handleNavigate(item.path)}
+                  className="flex items-center gap-2"
                 >
+                  {item.icon && <item.icon className="h-4 w-4" />}
                   {item.label}
                 </Button>
               ))}
@@ -100,8 +113,9 @@ export default function TopNav() {
                       key={item.path}
                       variant={isActive(item.path) ? 'secondary' : 'ghost'}
                       onClick={() => handleNavigate(item.path)}
-                      className="justify-start"
+                      className="justify-start flex items-center gap-2"
                     >
+                      {item.icon && <item.icon className="h-4 w-4" />}
                       {item.label}
                     </Button>
                   ))}

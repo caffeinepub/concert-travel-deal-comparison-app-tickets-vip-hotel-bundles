@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Make EOATravelDeals installable on Android via PWA support and provide an Android WebView wrapper project with clear build/install documentation for local APK testing.
+**Goal:** Provide clear, in-app guidance for installing EOATravelDeals on Android either as a PWA (recommended) or via a sideloaded debug APK, and ensure the Android build documentation is accurate.
 
 **Planned changes:**
-- Add PWA essentials: web app manifest at a stable path, link it from `frontend/index.html`, include required Android/PWA icons, and register a production service worker with basic app-shell caching plus an offline fallback message/page.
-- Add an Android wrapper project (e.g., Capacitor/WebView) in-repo that loads the production HTTPS deployment URL by default and does not break the existing web build.
-- Add English documentation explaining how to install the PWA on Android and how to build/sideload a debug APK, including prerequisites and Internet Identity troubleshooting notes for Android/PWA/WebView contexts.
+- Add an in-app entry point (visible to both signed-out and signed-in users) labeled clearly (e.g., “Install on Android”) that explains Android installation options.
+- Provide English-only, step-by-step instructions for (1) installing as an app via Android Chrome PWA and (2) installing a downloadable debug APK for developer/testing from the existing Capacitor Android wrapper.
+- Update/verify `frontend/docs/android.md` to include environment variable setup using `.env.capacitor` copied from `frontend/.env.capacitor.example`, note the HTTPS requirement for Internet Identity, and state the exact debug APK output path `android/app/build/outputs/apk/debug/app-debug.apk`, using the app name “EOATravelDeals”.
 
-**User-visible outcome:** On Android Chrome, users can “Add to Home screen” and launch EOATravelDeals as a standalone installed PWA, and developers can build and install a debug APK wrapper that opens the existing app sign-in flow and supports Internet Identity authentication.
+**User-visible outcome:** Users can find an “Install on Android” section inside the app that explains how to install EOATravelDeals as a PWA or (for developer/testing) how to obtain and sideload a debug APK, with matching repository documentation for building the APK.

@@ -1,11 +1,11 @@
 {
-  "frontend/src/App.tsx": "Main app component with TanStack Router setup, theme provider, and service worker registration on mount for PWA support.",
+  "frontend/src/App.tsx": "Main app component with TanStack Router setup, theme provider, service worker registration, and new /install-android route wired to InstallAndroidPage.",
   "frontend/src/pages/HomePage.tsx": "Landing page with hero section featuring the vintage passport logo, app tagline display, explaining the app's value proposition with CTAs renamed to \"Start with RouteRally\" and \"View CostCompass\".",
   "frontend/src/pages/TripBuilderPage.tsx": "Trip builder form page where users input event details, travel dates, and add ticket/VIP/hotel/transport options before generating bundle comparisons with transport cost inclusion.",
   "frontend/src/pages/ResultsPage.tsx": "Results page displaying generated bundles with transport cost inclusion, planned choice selection UI, better-value upgrade detection and flagging, and save functionality that persists baseline and upgrade alternatives, now properly handling null isUpgrade values.",
   "frontend/src/pages/SavedComparisonsPage.tsx": "Saved comparisons list page showing user's saved trip comparisons with planned baseline choice summaries and counts of auto-saved better-value upgrades by category.",
   "frontend/src/components/layout/AppLayout.tsx": "Main layout wrapper with top navigation, footer, route-based backgrounds, document title management, and offline status banner integration.",
-  "frontend/src/components/layout/TopNav.tsx": "Top navigation bar with auth-aware nav items showing the user's public screen name (with \"User\" fallback) in the profile button, and feature routes when authenticated, with consistent desktop and mobile menu behavior.",
+  "frontend/src/components/layout/TopNav.tsx": "Top navigation bar with auth-aware nav items including a persistent \"Install on Android\" link visible to both authenticated and unauthenticated users, with proper TypeScript interface for nav items with optional icon property.",
   "frontend/src/components/layout/Footer.tsx": "Footer component with copyright notice using centralized app name and updated fallback app identifier from 'ticketstay-app' to 'concertbundle-app', with attribution link to caffeine.ai including UTM tracking.",
   "frontend/src/components/auth/LoginButton.tsx": "Login/logout button component managing Internet Identity authentication, query cache clearing on logout, navigation to profile page after successful sign-in, and toast error notifications for login failures.",
   "frontend/src/components/auth/ProfileSetupDialog.tsx": "Modal dialog prompting new users to enter their public screen name (username) on first login with clear messaging that it's for public display and legal name will be requested separately for checkout, using the updated UserProfile structure with publicScreenName field.",
@@ -44,11 +44,11 @@
   "frontend/src/utils/urlParams.ts": "Utility function to extract URL query parameters, used for reading the admin token from the URL.",
   "frontend/src/backend.idl.ts": "Candid IDL factory definition for the backend canister interface, enabling type-safe communication between frontend and backend.",
   "frontend/src/hooks/useActor.ts": "React hook for initializing and managing the backend actor with Internet Identity authentication, query caching, and access control initialization.",
-  "frontend/src/components/auth/RequireAuth.tsx": "Route guard component that redirects unauthenticated users to the sign-in page (/) when attempting to access protected routes, while allowing the sign-in page itself to render for all users.",
+  "frontend/src/components/auth/RequireAuth.tsx": "Route guard component that redirects unauthenticated users to the sign-in page when attempting to access protected routes, while allowing public pages (sign-in and install-android) to render for all users.",
   "frontend/src/components/offers/TransportOffersEditor.tsx": "Reusable component for adding, editing, and removing transportation offers with mode (plane/train/taxi/ground), provider, class/comfort label, price, and currency fields.",
   "frontend/src/lib/upgradeDetection.ts": "Deterministic local upgrade detection utility that ranks quality based on user-entered class/comfort labels (tickets/transport) and hotel star rating + room type heuristics, returning flagged alternatives only from user-entered offers.",
   "frontend/src/components/profile/LegalNameSection.tsx": "Reusable profile section component for viewing and editing the user's private legal name with clear English helper text explaining it's used for checkout autofill, kept private, and that payment card details are not stored.",
-  "frontend/src/lib/routeBackgrounds.ts": "Centralized route-to-background mapping utility that resolves the correct landscape background image URL for a given pathname, including nested-route inheritance rules for /memory-finder/* and /groups/*, with a function to retrieve all backgrounds for preloading.",
+  "frontend/src/lib/routeBackgrounds.ts": "Centralized route-to-background mapping utility with /install-android route mapped to the sign-in Alps sunrise background for visual consistency.",
   "frontend/public/manifest.webmanifest": "Web app manifest defining EOATravelDeals as an installable PWA with standalone display mode, app icons, shortcuts, and Android-specific configuration.",
   "frontend/public/offline.html": "Static offline fallback page with clear messaging and retry button, served by the service worker when the app is offline.",
   "frontend/public/sw.js": "Service worker implementing app shell caching strategy with network-first approach, offline fallback, and automatic cache management for PWA support.",
@@ -66,6 +66,7 @@
   "frontend/android/app/src/main/res/values/strings.xml": "Android string resources defining the app name and package identifiers.",
   "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": "Adaptive launcher icon configuration for Android API 26+ with background and foreground layers.",
   "frontend/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml": "Round adaptive launcher icon configuration for Android launchers that prefer circular icons.",
-  "frontend/docs/android.md": "Comprehensive English documentation covering PWA installation, debug APK building, sideloading steps, Internet Identity troubleshooting, and Android-specific prerequisites.",
-  "frontend/docs/README.md": "Documentation index linking to the Android installation guide and providing quick navigation to key sections."
+  "frontend/docs/android.md": "Comprehensive English documentation covering PWA installation (recommended), debug APK building with explicit .env.capacitor configuration steps, HTTPS requirement for Internet Identity, and the exact debug APK output path at android/app/build/outputs/apk/debug/app-debug.apk.",
+  "frontend/docs/README.md": "Documentation index linking to the Android installation guide with updated quick links to PWA installation, APK build guide, .env.capacitor configuration, and troubleshooting sections.",
+  "frontend/src/pages/InstallAndroidPage.tsx": "New page displaying Android installation instructions with two clearly separated sections: PWA installation (recommended) and debug APK build/sideload guidance, including HTTPS requirements for Internet Identity and the exact APK output path."
 }
